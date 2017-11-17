@@ -1,0 +1,19 @@
+Package: shi
+Type: Package
+Title: Multiple Sequence Alignment Handling and Inspection
+Version: 0.1.0
+Author: Boris Steipe et al.
+Maintainer: Boris Steipe <boris.steipe@utoronto.ca>
+Description: shi combines code to handle, inspect, analyze, display, improve and process multiple sequence alignments.
+    Handling: reading and writing .aln and .mfa formatted files.
+    Inspecting: ...
+    Analsyis: ...
+    Display: ...
+    Improvements: ...
+    Process: ...
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Suggests:
+    testthat
+RoxygenNote: 6.0.1
