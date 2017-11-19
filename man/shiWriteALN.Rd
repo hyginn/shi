@@ -20,7 +20,7 @@ an empty string.}
 \item{myCon}{text connection (cf. the con argument for writeLines). Defaults
 to stdout().}
 
-\item{blockWidth}{width of sequence block. Default 80 characters.}
+\item{blockWidth}{width of sequence block. Default 60 characters.}
 }
 \value{
 None. The function is invoked for its side effect of printing an
