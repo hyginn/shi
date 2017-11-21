@@ -8,7 +8,7 @@
 #' @section Input: If input is an MsaAAMultipleAlignment or an AAStringSet it is
 #'   converted into a character vector before processing. Reasonably, all
 #'   sequences would have the same length, but that is not enforced and
-#'   sequences that are shorter than range[2] are right-padded with gap
+#'   sequences that are shorter than range[2] are right-padded with "-" gap
 #'   characters.
 #'
 #' @param ali object of class MsaAAMultipleAlignment or AAStringSet or a
