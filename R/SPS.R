@@ -18,48 +18,7 @@ library(devtools)
 #'
 #'
 
-##================================================================
-#We have a test alignment of N sequences with M columns
-# and for each ith column with Ai1 to AiN, each pair of residues Aij and Aik,
-# we have a score of p_ijk = 1 if the corresponding residues are aligned
-# with each other in the reference alignment, and 0 otherwise
-#seq1 <- "Q-LR-K"
-#seq2 <- "-NLRSK"
-#seq3 <- "-NLR-S"
-
-#ref1 <- "QLR-K"
-#ref2 <- "NLRSK"
-#ref3 <- "NLR-S"
-
-#testAli <- c(seq1, seq2, seq3)
-#refAli <- c(ref1, ref2, ref3)
-
-#lenAli <- nchar(testAli)
-#msaMatrix <- matrix(nrow = length(testAli), ncol = lenAli)
-
-#for (posi in 1: nchar(testAli)){
-#  for (i in 1:length(testAli)) {
-#  }
-#}
-
-# if same letter then score is 1 otherwise -1
-#check <- function(pos1, pos2) {
-#  if ((pos1 == "-") && (pos2 == "-")) {
-#    return(0)
-#  }
-#  else if ((pos1 == "-") || (pos2 == "-")) {
-#    return (-2)
-#  }
-#  else if (pos1 == pos2) {
-#    return (1)
-#  }
-#  else {
-#    return (-1)
-#  }
-#}
-##=======================================================
-
-#Adriel's pair map generator
+# ==== Adriel's pair map generator ====
 
 isGap <- function(element) {
   return(element == "-")
