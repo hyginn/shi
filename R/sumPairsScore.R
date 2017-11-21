@@ -1,6 +1,4 @@
-library(devtools)
-
-# SPS.R
+# sumPairsScore.R
 
 # The Prefab Q Score also known as the balibase SPS Score and Developer Score.
 #' It measures what proportion of all residue pairs within columns of one alignment 
