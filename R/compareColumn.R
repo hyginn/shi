@@ -6,17 +6,17 @@ library(devtools)
 #' compareColumn is called in balibaseTcScore as a helper function.
 #'
 #' Details.
-#' @section Input: If a multiple sequence alignment and a reference alignment are provided
-#' which are not in multi-Fasta formats, they are converted to multi-Fasta format using
-#' the provided shiWriteALN function.
+#' @section Input: A testCol column and refCol column subsetted from a XStringSet object. Both
+#' inputs carry a column at a given position in the multiple sequence alignment.
 #'
-#' @param testCol The name of the file that contains the MSA of multiple sequences in fasta format.
-#' This file must be located in the extdata directory.
+#' @param testCol The input column at a given position in the multiple sequence alignment being
+#' compared to a reference alignment.
 #'
-#' @param refCol The name of the file that contains the reference MSA of testAli in fasta format.
-#' This file must be located in the extdata directory.
+#' @param refCol The input column at a given position in the multiple sequence alignment in the
+#' reference alignment.
 #'
-#'
+#'@return TRUE if the reference column and test column have an equivalent alignment at a given
+#'position in the MSA. FALSE otherwise.
 
 compareColumn <- function(testCol, refCol) {
 

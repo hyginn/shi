@@ -15,7 +15,8 @@ library(Biostrings)
 #' This can be either "AAStringSet", "DNAStringSet", or "RNAStringSet". If the provided XStringSet
 #' format is invalid, stop execution and return an error statement.
 #'
-#' @example
+#' @return A XStringObject containing the multiple sequence alignment of the given
+#' input file in fasta format. The type of XStringObject depends on the readType parameter.
 #'
 
 readSequence <- function(fastaFile,
