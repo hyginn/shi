@@ -24,7 +24,8 @@
 #' @return None. The function is invoked for its side effect of printing an
 #'   alignment to a text connection.
 #'
-#' @seealso \code{\link{shiWriteMFA}} Write multi FASTA format.
+#' - reactivate seealso once shiWriteMFA has been uploaded.
+#' seealso \code{\link{shiWriteMFA}} Write multi FASTA format.
 #'
 #' @examples
 #' mySeq <- c(firstSeq  = "MRMDPVI--MIMLWTARGPPDFVDFDCRNKRGFYNHDMRDASQYFHLE",
