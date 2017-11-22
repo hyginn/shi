@@ -3,3 +3,7 @@ cache: packages
 r:
  - release
  - bioc-release
+r_packages:
+  - roxygen2
+before_script:
+  - R -e "devtools::document()"
