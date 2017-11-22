@@ -6,4 +6,5 @@
 #'
 #' @useDynLib shi
 #' @importFrom Rcpp sourceCpp
+#' @name loadCpp.R
 NULL
