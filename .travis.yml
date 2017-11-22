@@ -1,9 +1,19 @@
+# General build settings
 language: r
 cache: packages
-r:
- - release
- - bioc-release
+r: bioc-release
 r_packages:
   - roxygen2
+os:
+  - linux
+  - osx
+# Build documentation
 before_script:
-  - R -e "devtools::document()"
+  - R -e "roxygen2::roxygenise()"
+
+# Notification settings
+notifications:
+  email: false
+  # Encrypted slack settings
+  slack:
+    secure: zBP0r4eXrQoiaor4UvEYdq76BtaYYltdcp/EzojRkVwqp+hr7bMPWnicpQExCtIObyGFtY0opb2GDyQmC8HXjBbNOrV5ggf6l9xtLkcvkCjgvjrHlKOsw7g6Qgt9n48iBnWSvaVfq/dvsXWQwvrkaBq0WCYz/uDtbJcA2OcB5zyF3uL7XWXPAuF4OSl6GzN/mk6EflMGeJD89h7CxT6l8aSGMHM7Q+1rJ/45Rbl0g8vK4c4P2pwQjsZjDR9g6REjFpHTS7NHudGayHAbhkpmkvORQAESCG+JNA3h8W3B5SoTX2ptphQFw7tki+d8/W827x2EjfeA0y/bpwAfMvY0HcWyySjnWYkPrrzIUXv9oJqRuJFC9bfh7bKEH6NWOICn9WSkE/LGfYs9f2c/Ig6ltKIQiRSXSTlvbfOXUpqnYU2TbkZkRCeoPY1yugn50qdHQtUGdD9TD+etFDeUOxb2INJNdvaYq4V4TvrzyuMSG4C5aisigR87rnwlKo0BiBThPuwt4yu9do6tASFsrtwJwJkRduwLKmLUKFZoupW9NPH5z3Te4qHhAa7wlaq/di+F3vWhLEXSeP+aVeGbq77HfsNU6CrtrM8a45/+rO9vsgkaQ5oiNy1acQN6HZAm1EAZaVdYhDAf/yb/wlZz5u/WxZbIX2NOzSjU4WdVT0psNFs=
