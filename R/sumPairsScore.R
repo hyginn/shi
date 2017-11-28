@@ -1,84 +1,63 @@
 # sumPairsScore.R
 
-# The Prefab Q Score also known as the balibase SPS Score and Developer Score.
-#' It measures what proportion of all residue pairs within columns of one alignment 
+
+#' \code{sumPairsScore} Generate a sum of pairs score (SPS) between two sequences using a reference
+#' distance map and a testing distance map for both sequences.
+#'
+#' The balibase sum of pairs score is also known as the prefab Q score and developer score.
+#' It measures what proportion of all residue pairs within columns of one alignment
 #' are retained in a comparison alignment.
-#' 
-#' \code{<function>} 
 #'
-#' Details.
-#' @section Input: 
+#' @param refSeqMap A numeric vector for the distance map of reference sequence
+#' @param testSeqMap A numeric vector for the distance map of test sequence
+#' @param seqLength The number of alignments to compare of the two sequences
 #'
-#' @param ali 
-#'   
-#' @return Return the SPS score that is the number of correctly aligned residue pairs
-#' from the test alignment by the number of aligned residue pairs in the reference alignment.
+#' @return Return the SPS score between the two sequences. That is the number of correctly
+#' aligned residue pairs from the test alignment by the number of aligned residue pairs in
+#' the reference alignment.
 #'
+#' @examples
+#' refSeq <- c("Q", "-", "L", "R", "-", "K")
+#' testSeq <- c ("-", "Q", "L", "R", "S", "K")
+#' refSeq2 <- c("Q", "-", "L", "R", "S", "K")
+#' testSeq2 <- c("Q", "-", "L", "R", "-", "K")
+#' map <- generatePairMap(refSeq, testSeq)
+#' map2 <- generatePairMap(refSeq2, testSeq2)
+#' sumPairsScore(map$pairMapA, map$pairMapB)
+#' sumPairsScore(map2$pairMapA, map2$pairMapB)
 #'
+#' @references
+#' Edgar, Robert C. “Quality Measures for Protein Alignment Benchmarks.”
+#' Nucleic Acids Research 38.7 (2010): 2145–2153. PMC. Web. 28 Nov. 2017.
+#'
+#' The generatePairMap function created by Adriel is used to generate the sequence
+#' maps for the parameters.
+#'
+#' @export
 
-# ==== Adriel's pair map generator ====
+sumPairsScore <- function(refSeqMap, testSeqMap, seqLength) {
 
-isGap <- function(element) {
-  return(element == "-")
-}
-
-generatePairMap <- function(seqA, seqB) {
-  posA <- 0
-  posB <- 0
-  seqALength <- length(seqA)
-  seqBLength <- length(seqB)
-  stopifnot(seqALength == seqBLength)
-  seqAMap <- vector(mode="numeric", length=seqALength)
-  seqBMap <- vector(mode="numeric", length=seqBLength)
-  pos1 <- 1
-  pos2 <- 1
-  for (i in 1:seqALength) {
-    cA <- seqA[i]
-    cB <- seqB[i]
-    cAGap <- isGap(cA)
-    cBGap <- isGap(cB)
-    if (!cAGap && !cBGap) {
-      seqAMap[posA] <- posA
-      seqBMap[posB] <- posB
-      # Handle the non upper case a differt time
-      posA <- posA + 1
-      posB <- posB + 1
-    } else if (!cAGap && cBGap) {
-      seqAMap[posA] <- -1
-      posA <- posA + 1
-    } else if (cAGap && !cBGap) {
-      seqBMap[posB] <- -1
-      posB <- posB + 1
-    }
-  }
-  df = data.frame(seqAMap, seqBMap)
-  return(df)
-}
-
-#========================================================
-
-spsScore <- function(refSeqMap, testSeqMap, seqlength) {
   pairCount <- 0
   correctPairCount <- 0
-  for (pos in 1: seqlength) {
+  for (pos in 1: seqLength) {
     refpos <- refSeqMap[pos]
 
-    if (-1 == refpos) {
+    if (is.na(refpos)) {
       next
     }
-  
+
     pairCount <- pairCount + 1
-  
+
     testpos <- testSeqMap[pos]
-  
-    if (-1 == testpos) {
+
+    if (is.na(testpos)) {
       next
     }
-  
+
     if (refpos == testpos) {
       correctPairCount <- correctPairCount + 1
     }
-  
+
     if (0 == pairCount) {
       return(0)
     }
@@ -86,27 +65,6 @@ spsScore <- function(refSeqMap, testSeqMap, seqlength) {
 
   return (correctPairCount / pairCount)
 }
-
-testseq <- c('Q', '-', 'L', 'R', '-', 'K')
-refseq <- c ('-', 'Q', 'L', 'R', 'S', 'K')
-
-d <- generatePairMap(testseq, refseq)
-
-spsScore(d$seqAMap, d$seqBMap, 6)
-
-testseq2 <- c('Q', '-', 'L', 'R', 'S', 'K')
-refseq2 <- c ('Q', '-', 'L', 'R', '-', 'K')
-
-d <- generatePairMap(testseq2, refseq2)
-
-spsScore(d$seqAMap, d$seqBMap, 6)
-
-testseq2 <- c('Q', '-', 'L', 'R', 'S', 'K')
-refseq2 <- c ('Q', '-', 'L', 'R', 'S', 'K')
-
-d <- generatePairMap(testseq2, refseq2)
-
-spsScore(d$seqAMap, d$seqBMap, 6)
 
 
 # [END]
