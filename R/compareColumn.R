@@ -15,21 +15,31 @@ library(devtools)
 #' @param refCol The input column at a given position in the multiple sequence alignment in the
 #' reference alignment.
 #'
+#' @param testPosition A vector containing the positions of each letter in a column at a given index
+#' for the test alignment
+#'
+#' @param refPosition A vector containing the positions of each letter in a column at a given index for
+#' the reference alignment
+#'
 #'@return TRUE if the reference column and test column have an equivalent alignment at a given
-#'position in the MSA. FALSE otherwise.
+#'position in the MSA. The positions and the letters in each column of the alignment
+#'must be equal. Return FALSE otherwise.
 
-compareColumn <- function(testCol, refCol) {
+compareColumn <- function(testCol, refCol, testPosition, refPosition) {
 
-  #boolVector carries TRUE at each position of the column if the testCol and the refCol
+  #Carries TRUE  if the testCol and the refCol
   #have the same protein/DNA/RNA letter at the given position
-  boolVector <- (testCol == refCol)
+  sameLetter <- (toString(testCol) == toString(refCol))
 
-  #If one of the letters from the testCol do not match with the refCol, return False.
+  #Carries TRUE if the positions of each letter are the same
+  samePos <- testPosition == refPosition
+
+  #If one of the letters from the testCol do not match with the refCol, or one of the
+  #positions in the reference aligment column and the test alignment column do not match,
+  #return False.
   #Otherwise return True
-  for (i in 1:length(boolVector)) {
-    if (identical(boolVector[i], FALSE)) {
+  if (identical(sameLetter, FALSE) || (FALSE %in% samePos)) {
       return (FALSE)
-    }
   }
 
   return (TRUE)

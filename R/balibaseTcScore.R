@@ -31,23 +31,28 @@ balibaseTcScore <- function(testAli, refAli, readType) {
 
   #Call helper function readSequence
   testSeq <- readSequence(testAli, readType)
-  refAli <- readSequence(refAli, readType)
+  refSeq <- readSequence(refAli, readType)
 
   #Retrieve the length of the longest sequence in the test sequence
   maxWidth <- (max(width(testSeq)))
 
-  for (i in 1:maxWidth) {
+  #Retrieve the matrix of positions for each alignment
+  numSeq <- length(subseq(testSeq, 1, 1))
+  testPosition <- positionAlignment(testSeq, numSeq, maxWidth)
+  refPosition <- positionAlignment(refSeq, numSeq, maxWidth)
 
+  for (i in 1:maxWidth) {
+    #Retrieve a column at a given index of each alignment
     testCol <- c(subseq(testSeq, i, i))
-    refCol <- c(subseq(refAli, i, i))
+    refCol <- c(subseq(refSeq, i, i))
 
     #Call helper function compareColumn
-    if (compareColumn(testCol, refCol) == TRUE) {
+    if (compareColumn(testCol, refCol, testPosition[i,], refPosition[i,]) == TRUE) {
       correctCount <- correctCount + 1
     }
   }
 
-  score <- (correctCount / (max(width(refAli))))
+  score <- (correctCount / (max(width(refSeq))))
   return (score)
 }
 
