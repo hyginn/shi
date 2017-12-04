@@ -23,8 +23,8 @@
 #' testSeq2 <- c("Q", "-", "L", "R", "-", "K")
 #' map <- generatePairMap(refSeq, testSeq)
 #' map2 <- generatePairMap(refSeq2, testSeq2)
-#' sumPairsScore(map$pairMapA, map$pairMapB)
-#' sumPairsScore(map2$pairMapA, map2$pairMapB)
+#' sumPairsScore(map$pairMapA, map$pairMapB, 6)
+#' sumPairsScore(map2$pairMapA, map2$pairMapB, 6)
 #'
 #' @references
 #' Edgar, Robert C. “Quality Measures for Protein Alignment Benchmarks.”
