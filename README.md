@@ -20,8 +20,8 @@ suggested by Hadley Wickham in:
 
 Some useful keyboard shortcuts for package authoring:
 
+* Update Documentation:      `Cmd + Shift + D` or `roxygen2::roxygenise()`
 * Build and Reload Package:  `Cmd + Shift + B`
-* Update Documentation:      `Cmd + Shift + D` or `devtools::document()`
 * Test Package:              `Cmd + Shift + T`
 * Check Package:             `Cmd + Shift + E` or `devtools::check()`
 
