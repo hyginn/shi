@@ -1,5 +1,3 @@
-library(devtools)
-
 #' compareColumn.R
 #'
 #' \code{<function>} Return TRUE or FALSE if two given columns from an MSA are equivalent.

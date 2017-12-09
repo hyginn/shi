@@ -1,5 +1,3 @@
-library(devtools)
-
 #' positionAlignment.R
 #'
 #' \code{<function>} Return a matrix containing the position index of the letters int he alignment.
