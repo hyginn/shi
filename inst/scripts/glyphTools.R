@@ -75,7 +75,7 @@ svg2commands <- function(svg) {
   # return a list of paths containing the individual svg path commands
   #
   svg <- paste(svg, collapse = " ")
-  x <- grep("<glyph ", mySVG)
+  x <- grep("<glyph ", svg)
   patt <- "<glyph .*?d=\\\"([^\\\"]+)\\\""
   m <- regexec(patt, svg)
   if (m[[1]][1] == -1) {
@@ -358,7 +358,7 @@ bBox <- function(paths) {
 
 
 
-makeGlyph <- function(c, font = GLYPHFONT) {
+makeGlyph <- function(c, font = GLYPHFONT, svgFile = tempfile()) {
   # create a glyph list, given a UTF-8 character
   glyph <- list()
 
@@ -368,14 +368,13 @@ makeGlyph <- function(c, font = GLYPHFONT) {
 
   # codepoint to svg
   # https://xmlgraphics.apache.org/batik/tools/font-converter.html
-  myFile <- tempfile()
   myCommand <- sprintf("batik-ttf2svg %s -l %d -h %d -id xSVG -o %s",
                        glyph$font,
                        glyph$codepoint,
                        glyph$codepoint,
-                       myFile)
+                       svgFile)
   system(command = myCommand)
-  mySVG <- readLines(myFile)
+  mySVG <- readLines(svgFile)
   glyph$paths <- svg2commands(mySVG)
   glyph$paths <- commands2Points(glyph$paths)
   glyph$bbox <- bBox(glyph$paths)
