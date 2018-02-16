@@ -53,7 +53,7 @@ char2codepoint <- function(chr) {
     myCodepoint <- bits2dec(leftPad(myBytes[c(5:8, 11:16, 19:24)], 24))
   } else if (nBytes == 4) {
     myBytes <- hex2bits(myRaw)
-    myCodepoint <- bits2dec(leftPad(myBytes[c(5:8, 11:16, 19:24, 27:32)], 32))
+    myCodepoint <- bits2dec(leftPad(myBytes[c(6:8, 11:16, 19:24, 27:32)], 32))
   }
   return(myCodepoint)
 }
