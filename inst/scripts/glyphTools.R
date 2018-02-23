@@ -66,6 +66,11 @@ rawPath2commands <- function(s) {
   return(strsplit(x, "\\s+", perl = TRUE))
 }
 
+reflectPoint <- function(p, ori) {
+  # reflects p over ori
+  return( ((p - ori) * -1) + ori)
+}
+
 svg2commands <- function(svg) {
   # process an svg file containing a glyph path into svg commands
   #
@@ -91,6 +96,17 @@ svg2commands <- function(svg) {
     pathList[[i]] <- list()
     pathList[[i]]$rawPath <- x[[1]][i]
     pathCommands <- rawPath2commands(pathList[[i]]$rawPath)
+    # transform T into Q
+    for (j in seq_along(pathCommands)) {
+      if (pathCommands[[j]][1] == "T") {
+        cmdPrev <- pathCommands[[j - 1]]
+        if (cmdPrev[1] == "Q") {
+          controlPoint <- reflectPoint(p = as.numeric(cmdPrev[2:3]),
+                                       ori = as.numeric(cmdPrev[4:5]))
+          pathCommands[[j]] <- c("Q", as.character(controlPoint), pathCommands[[j]][2:3])
+        }
+      }
+    }
     pathList[[i]]$commands <- pathCommands
   }
 
@@ -261,11 +277,6 @@ isCW <- function(xy) {
   return(twiceArea >= 0)
 }
 
-
-reflectPoint <- function(p, ori) {
-  # reflects p over ori
-  return( ((p - ori) * -1) + ori)
-}
 
 commands2Points <- function(pL) {
   # iterate over a path list, execute the SVG commands, and collect the
