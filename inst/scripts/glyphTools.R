@@ -368,7 +368,7 @@ makeGlyph <- function(c, font = GLYPHFONT, svgFile = tempfile()) {
 
   # codepoint to svg
   # https://xmlgraphics.apache.org/batik/tools/font-converter.html
-  javaExec <- "java -jar ~/Downloads/batik/batik-1.9/batik-ttf2svg-1.9.jar"
+  javaExec <- "java -jar /home/adrl/Downloads/batik/batik-1.9/batik-ttf2svg-1.9.jar"
   myCommand <- sprintf("%s %s -l %d -h %d -id xSVG -o %s",
                        javaExec,
                        glyph$font,
@@ -377,7 +377,9 @@ makeGlyph <- function(c, font = GLYPHFONT, svgFile = tempfile()) {
                        svgFile)
   system(command = myCommand)
   mySVG <- readLines(svgFile)
+  print(mySVG)
   glyph$paths <- svg2commands(mySVG)
+  print(glyph$paths)
   glyph$paths <- commands2Points(glyph$paths)
   glyph$bbox <- bBox(glyph$paths)
 
