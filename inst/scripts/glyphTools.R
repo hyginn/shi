@@ -374,12 +374,11 @@ makeGlyph <- function(c, font = GLYPHFONT, svgFile = tempfile()) {
                        glyph$font,
                        glyph$codepoint,
                        glyph$codepoint,
+
                        svgFile)
   system(command = myCommand)
   mySVG <- readLines(svgFile)
-  print(mySVG)
   glyph$paths <- svg2commands(mySVG)
-  print(glyph$paths)
   glyph$paths <- commands2Points(glyph$paths)
   glyph$bbox <- bBox(glyph$paths)
 
@@ -470,3 +469,4 @@ glyphPoly <- function(glyph,
 
 
 # [END]
+
