@@ -1,6 +1,3 @@
-library(devtools)
-library(Biostrings)
-
 #readSequence.R
 
 #' \code{<function>} Produce a sequence alignment by taking a protein sequence
@@ -27,15 +24,15 @@ readSequence <- function(fastaFile,
 
   #Read the alignment according to the given type of alignment
   if (readType == "AAStringSet") {
-    mySeq <- readAAStringSet(filepath)
+    mySeq <- Biostrings::readAAStringSet(filepath)
   }
 
   else if (readType == "DNAStringSet") {
-    mySeq <- readDNAStringSet(filepath)
+    mySeq <- Biostrings::readDNAStringSet(filepath)
   }
 
   else if (readType == "RNAStringSet") {
-    mySeq <- readRNAStringSet(filepath)
+    mySeq <- Biostrings::readRNAStringSet(filepath)
   }
 
   else {
