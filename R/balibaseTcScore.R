@@ -1,5 +1,3 @@
-library(devtools)
-
 #' balibaseTcScore.R
 #'
 #' \code{<function>} Return a score for a given multiple sequence alignment compared with a
@@ -34,17 +32,17 @@ balibaseTcScore <- function(testAli, refAli, readType) {
   refSeq <- readSequence(refAli, readType)
 
   #Retrieve the length of the longest sequence in the test sequence
-  maxWidth <- (max(width(testSeq)))
+  maxWidth <- (max(BiocGenerics::width(testSeq)))
 
   #Retrieve the matrix of positions for each alignment
-  numSeq <- length(subseq(testSeq, 1, 1))
+  numSeq <- length(Biostrings::subseq(testSeq, 1, 1))
   testPosition <- positionAlignment(testSeq, numSeq, maxWidth)
   refPosition <- positionAlignment(refSeq, numSeq, maxWidth)
 
   for (i in 1:maxWidth) {
     #Retrieve a column at a given index of each alignment
-    testCol <- c(subseq(testSeq, i, i))
-    refCol <- c(subseq(refSeq, i, i))
+    testCol <- c(Biostrings::subseq(testSeq, i, i))
+    refCol <- c(Biostrings::subseq(refSeq, i, i))
 
     #Call helper function compareColumn
     if (compareColumn(testCol, refCol, testPosition[i,], refPosition[i,]) == TRUE) {
@@ -52,7 +50,7 @@ balibaseTcScore <- function(testAli, refAli, readType) {
     }
   }
 
-  score <- (correctCount / (max(width(refSeq))))
+  score <- (correctCount / (max(BiocGenerics::width(refSeq))))
   return (score)
 }
 
