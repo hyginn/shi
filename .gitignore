@@ -4,5 +4,3 @@
 # .RData
 .Ruserdata
 .Rbuildignore
-# roxygen created files
-NAMESPACE
