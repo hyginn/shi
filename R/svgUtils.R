@@ -33,6 +33,5 @@ svg2commands <- function(svg) {
     pathCommands <- rawPath2commands(pathList[[i]]$rawPath)
     pathList[[i]]$commands <- pathCommands
   }
-
   return(pathList)
 }

@@ -29,7 +29,7 @@ makeScalingClosure <- function(oldBox, newBox) {
 glyphPoly <- function(glyph,
                       bbox = c(0, 0, 1, 1),
                       fill = "#000000",
-                      bg = par("bg"),
+                      bg = graphics::par("bg"),
                       lty = "blank") {
   # plot a glyph as a polygon into the bbox target bounding box
 
@@ -38,14 +38,14 @@ glyphPoly <- function(glyph,
   # shapes
   for (i in seq_along(glyph$paths)) {
     if (glyph$paths[[i]]$CW == TRUE) {
-      polygon(f(glyph$paths[[i]]$xy), col = fill, lty = lty)
+      graphics::polygon(f(glyph$paths[[i]]$xy), col = fill, lty = lty)
     }
   }
 
   # holes
   for (i in seq_along(glyph$paths)) {
     if (glyph$paths[[i]]$CW == FALSE) {
-      polygon(f(glyph$paths[[i]]$xy), col = bg, lty = lty)
+      graphics::polygon(f(glyph$paths[[i]]$xy), col = bg, lty = lty)
     }
   }
 }

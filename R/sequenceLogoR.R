@@ -4,32 +4,29 @@
 
 # refactor this out later
 
-NBEZIERPOINTS <- 20 # number of points on a flattened Bezier segment
-GLYPHFONT <- "~/MS-Mincho.ttf"
-
 # === Tools ==================
 
-source("./inst/scripts/glyphTools.R")
-source("./inst/scripts/sequenceLogos.R")
+# source("./inst/scripts/glyphTools.R")
+# source("./inst/scripts/sequenceLogos.R")
+#
+# if (! require(msa, quietly=TRUE)) {
+#   if (! exists("biocLite")) {
+#     source("https://bioconductor.org/biocLite.R")
+#   }
+#   biocLite("msa")
+#   library(msa)
+# }
+#
+# mySequenceFile <- system.file("examples", "exampleAA.fasta", package="msa")
+# mySequences <- readAAStringSet(mySequenceFile)
+# mySequences
+#
+# myFirstAlignment <- msa(mySequences, "Muscle")
+#
+# m <- as.character(myFirstAlignment)
+# z <- AAStringSet(m)
 
-if (! require(msa, quietly=TRUE)) {
-  if (! exists("biocLite")) {
-    source("https://bioconductor.org/biocLite.R")
-  }
-  biocLite("msa")
-  library(msa)
-}
-
-mySequenceFile <- system.file("examples", "exampleAA.fasta", package="msa")
-mySequences <- readAAStringSet(mySequenceFile)
-mySequences
-
-myFirstAlignment <- msa(mySequences, "Muscle")
-
-m <- as.character(myFirstAlignment)
-z <- AAStringSet(m)
-
-sequenceLogoR <- function(alignment, settingsMap, isAminoAcids = FALSE, start = 1, end = 0, gapChracter = '-', calcCurrection = FALSE) {
+sequenceLogoR <- function(alignment, settingsMap, isAminoAcid = FALSE, start = 1, end = 0, gapChracter = '-', calcCorrection = FALSE) {
   # generate glyphs
   glyphs <- list()
   colors <- list()
@@ -40,26 +37,26 @@ sequenceLogoR <- function(alignment, settingsMap, isAminoAcids = FALSE, start = 
     # TODO: random color if not found
     colors[[base]] <- item$color
   }
-  maxInfo <- maxInformation(isAminoAcids)
+  maxInfo <- calcMaxInformation(isAminoAcid)
   if (end == 0) {
     end <- length(alignment[[1]])
   }
   totalCols <- end - start + 1
   # new plot
-  plot(0, 0,
+  graphics::plot(0, 0,
        xlim = c(0, totalCols),
        ylim = c(0, maxInfo),
        type = "n")
   # correction?
   correction <- 0
-  if (calcCurrection) {
+  if (calcCorrection) {
     numSeq <- length(alignment)
-    correction <- smallSampleCorrection(numSeq, isAminoAcids)
+    correction <- smallSampleCorrection(numSeq, isAminoAcid)
   }
   for (i in start:end) {
-    currCol <- subseq(alignment, i, i)
+    currCol <- Biostrings::subseq(alignment, i, i)
     currFreqs <- getFrequencies(currCol)
-    currInfo <- calcInformation(currFreqs, correction, isAminoAcids)
+    currInfo <- calcInformation(currFreqs, correction, isAminoAcid)
     heights <- calcHeights(currFreqs, currInfo)
     orderedHeights <- heights[order(heights)]
     currNames <- names(orderedHeights)
@@ -77,17 +74,17 @@ sequenceLogoR <- function(alignment, settingsMap, isAminoAcids = FALSE, start = 
   }
 }
 
-aa_set <- names(AMINO_ACID_CODE)
+# aa_set <- names(AMINO_ACID_CODE)
+#
+# theSettings <- list()
+# randomColors <- colorRampPalette(c("#C27E7E", "#816EBA", "#758AC9", "#82C9B6"))(length(aa_set))
+#
+#
+# for (i in 1:length(aa_set)) {
+#   someList <- list()
+#   someList[["base"]] <- aa_set[i]
+#   someList[["color"]] <-randomColors[i]
+#   theSettings[[aa_set[i]]] <- someList
+# }
 
-theSettings <- list()
-randomColors <- colorRampPalette(c("#C27E7E", "#816EBA", "#758AC9", "#82C9B6"))(length(aa_set))
-
-
-for (i in 1:length(aa_set)) {
-  someList <- list()
-  someList[["base"]] <- aa_set[i]
-  someList[["color"]] <-randomColors[i]
-  theSettings[[aa_set[i]]] <- someList
-}
-
-sequenceLogoR(z, theSettings, isAminoAcids = TRUE, start = 200, end = 220)
+# sequenceLogoR(z, theSettings, isAminoAcids = TRUE, start = 200, end = 220)

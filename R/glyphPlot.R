@@ -1,9 +1,20 @@
-glyphPlot <- function(glyph, fill = "#000000", bg = par("bg"), lty = "blank") {
+# glyphPlot.R
+
+#' \code{glyphPlot} plot a single glyph.
+#'
+#' Details.
+#' @param glyph a glyph set to plot.
+#' @param fill color to fill in glyph.
+#' @param bg color of the background.
+#' @param lty line type to use.
+#' @return None.
+#' @export
+glyphPlot <- function(glyph, fill = "#000000", bg = graphics::par("bg"), lty = "blank") {
   # plot one glyph into its native bounding box.
   #
   # We first plot an empty frame, then the outlines as filled polygons,
   # finally the holes as polygons filled with the background colour.
-  plot(0, 0,
+  graphics::plot(0, 0,
        xlim = glyph$bbox[c(1, 3)],
        ylim = glyph$bbox[c(2, 4)],
        type = "n")
@@ -11,14 +22,14 @@ glyphPlot <- function(glyph, fill = "#000000", bg = par("bg"), lty = "blank") {
   # shapes
   for (i in seq_along(glyph$paths)) {
     if (glyph$paths[[i]]$CW == TRUE) {
-      polygon(glyph$paths[[i]]$xy, col = fill, lty = lty)
+      graphics::polygon(glyph$paths[[i]]$xy, col = fill, lty = lty)
     }
   }
 
   # holes
   for (i in seq_along(glyph$paths)) {
     if (glyph$paths[[i]]$CW == FALSE) {
-      polygon(glyph$paths[[i]]$xy, col = bg, lty = lty)
+      graphics::polygon(glyph$paths[[i]]$xy, col = bg, lty = lty)
     }
   }
 }

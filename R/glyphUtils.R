@@ -115,7 +115,7 @@ quadTo <- function(cmd, cP, N) {
 
   xy <- matrix(c(numeric(), numeric()), ncol = 2)
   for (i in 1:nrow(pQ)) {
-    bp <- bezier(t=seq(0, 1, length=N), p=matrix(pQ[i, ], ncol=2, byrow=TRUE))
+    bp <- bezier::bezier(t=seq(0, 1, length=N), p=matrix(pQ[i, ], ncol=2, byrow=TRUE))
     xy <- rbind(xy, bp[-1, ])
   }
   return(xy)
@@ -184,7 +184,7 @@ commands2Points <- function(pL, numBezierPoints = 20) {
       } else if (cmd[1] %in% c("V")) {
         xy <- rbind(xy, verTo(cmd, x = xy[nrow(xy), "x"]))
       } else if (cmd[1] %in% c("Q")) {
-        xy <- rbind(xy, quadTo(cmd, cP = xy[nrow(xy), ], N = NBEZIERPOINTS))
+        xy <- rbind(xy, quadTo(cmd, cP = xy[nrow(xy), ], N = numBezierPoints))
       } else if (cmd[1] %in% c("T")) {
         # Bezier shorthand notation
         # https://www.w3.org/TR/SVG/paths.html: Draws a quadratic Bézier curve from
