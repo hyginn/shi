@@ -18,6 +18,6 @@ smallSampleCorrection <- function(numSamples, isAminoAcid = FALSE,
     if (isAminoAcid) {
       b <- 20
     }
-    return(b / (log(2) * 2 * numSamples))
+    return((b - 1) / (log(2) * 2 * numSamples))
   }
 }

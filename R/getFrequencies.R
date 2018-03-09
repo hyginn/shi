@@ -13,5 +13,5 @@ getFrequencies <- function(column, gapCharacter = '-', includeGaps = FALSE) {
   if (!includeGaps) {
     column <- column[column != gapCharacter]
   }
-  return(table(column) / length(column))
+  return(BiocGenerics::table(column) / length(column))
 }

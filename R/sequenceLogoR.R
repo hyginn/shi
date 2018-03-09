@@ -1,38 +1,32 @@
 # sequenceLogoR.R
 
-# something something documentation
-
-# refactor this out later
-
-# === Tools ==================
-
-# source("./inst/scripts/glyphTools.R")
-# source("./inst/scripts/sequenceLogos.R")
-#
-# if (! require(msa, quietly=TRUE)) {
-#   if (! exists("biocLite")) {
-#     source("https://bioconductor.org/biocLite.R")
-#   }
-#   biocLite("msa")
-#   library(msa)
-# }
-#
-# mySequenceFile <- system.file("examples", "exampleAA.fasta", package="msa")
-# mySequences <- readAAStringSet(mySequenceFile)
-# mySequences
-#
-# myFirstAlignment <- msa(mySequences, "Muscle")
-#
-# m <- as.character(myFirstAlignment)
-# z <- AAStringSet(m)
-
-sequenceLogoR <- function(alignment, settingsMap, isAminoAcid = FALSE, start = 1, end = 0, gapChracter = '-', calcCorrection = FALSE) {
+#' \code{sequenceLogoR} generate a sequence logo from a multiple sequence
+#' alignment
+#'
+#' Details.
+#' @param alignment a multiple sequence alignment
+#' @param settingsMap something something color to base.
+#' @param isAminoAcid flag to use amino acid specific calculations.
+#' @param start generate the sequence logo starting from this index.
+#' @param end generate the sequence logo until this index.
+#' @param gapCharacter the chracter dipicting a gap in the alignment.
+#' @param calcCorrection flag to calculate small sample corrections.
+#' @param entropyMethod choice between shannon or kl (kullback leibler) on
+#' calculating the entropy.
+#' @export
+sequenceLogoR <- function(alignment,
+                          settingsMap,
+                          isAminoAcid = FALSE,
+                          start = 1,
+                          end = 0,
+                          gapCharacter = '-',
+                          calcCorrection = FALSE,
+                          entropyMethod = "shannon") {
   # generate glyphs
   glyphs <- list()
   colors <- list()
   for (item in settingsMap) {
     base <- item$base
-    # global? what if different font?
     glyphs[[base]] <- makeGlyph(base)
     # TODO: random color if not found
     colors[[base]] <- item$color
@@ -48,15 +42,25 @@ sequenceLogoR <- function(alignment, settingsMap, isAminoAcid = FALSE, start = 1
        ylim = c(0, maxInfo),
        type = "n")
   # correction?
-  correction <- 0
-  if (calcCorrection) {
-    numSeq <- length(alignment)
-    correction <- smallSampleCorrection(numSeq, isAminoAcid)
+  if (entropyMethod == "shannon" && calcCorrection) {
+    numSeqs <- length(alignment)
+    corrections <- numeric(numSeqs)
+    for (i in 1:numSeqs) {
+      corrections[i] <- smallSampleCorrection(i, isAminoAcid, simulated = FALSE)
+    }
   }
   for (i in start:end) {
     currCol <- Biostrings::subseq(alignment, i, i)
+    correction <- 0
+    if (calcCorrection) {
+      numNonGaps <- length(currCol[currCol != gapCharacter])
+      correction <- corrections[numNonGaps]
+    }
     currFreqs <- getFrequencies(currCol)
-    currInfo <- calcInformation(currFreqs, correction, isAminoAcid)
+    currInfo <- calcInformation(currFreqs, entropyMethod,
+                                correction, isAminoAcid)
+    # remove negative info
+    currInfo[currInfo < 0] <- 0
     heights <- calcHeights(currFreqs, currInfo)
     orderedHeights <- heights[order(heights)]
     currNames <- names(orderedHeights)
@@ -67,24 +71,10 @@ sequenceLogoR <- function(alignment, settingsMap, isAminoAcid = FALSE, start = 1
       base <- currNames[j]
       height <- orderedHeights[[j]]
       glyphPoly(glyphs[[base]],
-                bbox = c(plotColStart, currBottom, plotColStart + 1, currBottom + height),
+                bbox = c(plotColStart, currBottom,
+                         plotColStart + 1, currBottom + height),
                 fill = colors[[base]])
       currBottom <- currBottom + height
     }
   }
 }
-
-# aa_set <- names(AMINO_ACID_CODE)
-#
-# theSettings <- list()
-# randomColors <- colorRampPalette(c("#C27E7E", "#816EBA", "#758AC9", "#82C9B6"))(length(aa_set))
-#
-#
-# for (i in 1:length(aa_set)) {
-#   someList <- list()
-#   someList[["base"]] <- aa_set[i]
-#   someList[["color"]] <-randomColors[i]
-#   theSettings[[aa_set[i]]] <- someList
-# }
-
-# sequenceLogoR(z, theSettings, isAminoAcids = TRUE, start = 200, end = 220)
