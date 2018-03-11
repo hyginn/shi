@@ -5,12 +5,10 @@
 #' Details.
 #' @param freqs frequency table of the residues.
 #' @param entropyMethod method to use to calculate the entropy.
-#' @param correction correction amount to apply to the calculation.
 #' @param isAminoAcid flag to use amino acid specific calculations.
 #' @return A table of frequencies for the residues.
 #' @export
-calcInformation <- function(freqs, entropyMethod = "kl", correction = 0,
-                            isAminoAcid = FALSE) {
+calcInformation <- function(freqs, entropyMethod = "kl", isAminoAcid = FALSE) {
   allowedMethods <- c("shannon", "kl")
   if (! entropyMethod %in% allowedMethods) {
     # something warning terminate
@@ -18,7 +16,7 @@ calcInformation <- function(freqs, entropyMethod = "kl", correction = 0,
   b <- 4
   if (entropyMethod == "shannon") {
     entropy <- calcShannonEntropy(freqs)
-    return(calcMaxInformation(isAminoAcid) - entropy - correction)
+    return(calcMaxInformation(isAminoAcid) - entropy)
   } else if (entropyMethod == "kl") {
     # something
   }

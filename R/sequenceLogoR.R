@@ -13,6 +13,7 @@
 #' @param calcCorrection flag to calculate small sample corrections.
 #' @param entropyMethod choice between shannon or kl (kullback leibler) on
 #' calculating the entropy.
+#' @param gapBoxesPosition where to display the gap boxes.
 #' @export
 sequenceLogoR <- function(alignment,
                           settingsMap,
@@ -21,7 +22,9 @@ sequenceLogoR <- function(alignment,
                           end = 0,
                           gapCharacter = '-',
                           calcCorrection = FALSE,
-                          entropyMethod = "shannon") {
+                          entropyMethod = "shannon",
+                          gapBoxesPosition = "below") {
+  # TODO: check if gapBoxesPosition is valid
   # generate glyphs
   glyphs <- list()
   colors <- list()
@@ -42,8 +45,8 @@ sequenceLogoR <- function(alignment,
        ylim = c(0, maxInfo),
        type = "n")
   # correction?
+  numSeqs <- length(alignment)
   if (entropyMethod == "shannon" && calcCorrection) {
-    numSeqs <- length(alignment)
     corrections <- numeric(numSeqs)
     for (i in 1:numSeqs) {
       corrections[i] <- smallSampleCorrection(i, isAminoAcid, simulated = FALSE)
@@ -57,24 +60,38 @@ sequenceLogoR <- function(alignment,
       correction <- corrections[numNonGaps]
     }
     currFreqs <- getFrequencies(currCol)
-    currInfo <- calcInformation(currFreqs, entropyMethod,
-                                correction, isAminoAcid)
-    # remove negative info
-    currInfo[currInfo < 0] <- 0
-    heights <- calcHeights(currFreqs, currInfo)
+    # uncorrected information
+    currInfo <- calcInformation(currFreqs, entropyMethod, isAminoAcid)
+    # max possible if corrected with all samples
+    correctedMax <- max(currInfo - corrections[numSeqs], 0)
+    # corrected with only observed
+    numNonGaps <- length(currCol[currCol != gapCharacter])
+    correctedObserved <- max(currInfo - corrections[numNonGaps], 0)
+    heights <- calcHeights(currFreqs, correctedObserved)
     orderedHeights <- heights[order(heights)]
     currNames <- names(orderedHeights)
     plotColStart <- i - start
     currBottom <- 0
     # draw TODO: refactor this out
+    if (gapBoxesPosition == "below" && correctedMax != correctedObserved) {
+      gapBoxHeight <- correctedMax - correctedObserved
+      rect(plotColStart, currBottom, plotColStart + 0.95, currBottom + gapBoxHeight, col = "gray87")
+      currBottom <- currBottom + gapBoxHeight
+    }
     for (j in 1:length(orderedHeights)) {
       base <- currNames[j]
       height <- orderedHeights[[j]]
+      # bbox width should be settable
       glyphPoly(glyphs[[base]],
                 bbox = c(plotColStart, currBottom,
-                         plotColStart + 1, currBottom + height),
+                         plotColStart + 0.95, currBottom + height),
                 fill = colors[[base]])
       currBottom <- currBottom + height
+    }
+    if (gapBoxesPosition == "above" && correctedMax != correctedObserved) {
+      gapBoxHeight <- correctedMax - correctedObserved
+      rect(plotColStart, currBottom, plotColStart + 0.95, currBottom + gapBoxHeight, col = "gray87")
+      currBottom <- currBottom + gapBoxHeight
     }
   }
 }
