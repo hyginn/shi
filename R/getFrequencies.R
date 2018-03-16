@@ -9,9 +9,28 @@
 #' calculation.
 #' @return A table of frequencies for the residues.
 #' @export
-getFrequencies <- function(column, gapCharacter = '-', includeGaps = FALSE) {
-  if (!includeGaps) {
-    column <- column[column != gapCharacter]
+getFrequencies <- function(column, isAminoAcid = FALSE, gapCharacter = "-",
+                           addPseudoCounts = FALSE) {
+  if (isAminoAcid) {
+    alphabet <- c("A", "R", "N", "D", "C", "Q", "E", "G", "H", "I",
+                  "L", "K", "M", "F", "P", "S", "T", "W", "Y", "V")
+  } else {
+    alphabet <- c("A", "C", "T", "G")
   }
-  return(BiocGenerics::table(column) / length(column))
+  freqs <- numeric(length(alphabet))
+  names(freqs) <- alphabet
+  for (i in seq_along(column)) {
+    residue <- as.character(column[i])
+    isGap <- residue == gapCharacter
+    if (!(residue %in% alphabet) && !isGap) {
+      stop("PANIC: unknown residue!")
+    }
+    if (!isGap) {
+      freqs[residue] <- freqs[residue] + 1
+    }
+  }
+  if (addPseudoCounts) {
+    freqs <- freqs + 0.001
+  }
+  return(freqs / sum(freqs))
 }

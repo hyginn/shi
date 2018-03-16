@@ -23,9 +23,9 @@ sequenceLogoR <- function(alignment,
                           gapCharacter = '-',
                           calcCorrection = FALSE,
                           entropyMethod = "shannon",
-                          gapBoxesPosition = "below") {
+                          displayGapInfo = FALSE) {
   # TODO: check if gapBoxesPosition is valid
-  # generate glyphs
+  ###### generate glyphs
   glyphs <- list()
   colors <- list()
   for (item in settingsMap) {
@@ -34,50 +34,73 @@ sequenceLogoR <- function(alignment,
     # TODO: random color if not found
     colors[[base]] <- item$color
   }
-  maxInfo <- calcMaxInformation(isAminoAcid)
   if (end == 0) {
     end <- length(alignment[[1]])
   }
   totalCols <- end - start + 1
-  # new plot
+  maxInfo <- calcMaxInformation(isAminoAcid)
+  numSeqs <- length(alignment)
+
+  ###### new plot
+  yMin <- 0
+  if (displayGapInfo) {
+    if (!calcCorrection) {
+      stop("Can't show gap information without calculating correction")
+    }
+    yMin <- -maxInfo
+  }
   graphics::plot(0, 0,
        xlim = c(0, totalCols),
-       ylim = c(0, maxInfo),
+       ylim = c(yMin, maxInfo),
        type = "n")
+
+  ###### Generate list to keep track of calculated corrections
   # correction?
-  numSeqs <- length(alignment)
-  if (entropyMethod == "shannon" && calcCorrection) {
+  if (calcCorrection) {
     corrections <- numeric(numSeqs)
-    for (i in 1:numSeqs) {
-      corrections[i] <- smallSampleCorrection(i, isAminoAcid, simulated = FALSE)
-    }
+    # calculate correction when all sequences are considered
+    corrections[numSeqs] <- smallSampleCorrection(numSeqs, isAminoAcid,
+                                                  simulated = FALSE)
   }
+
+  ###### iterate though all columns
   for (i in start:end) {
     currCol <- Biostrings::subseq(alignment, i, i)
-    correction <- 0
-    if (calcCorrection) {
-      numNonGaps <- length(currCol[currCol != gapCharacter])
-      correction <- corrections[numNonGaps]
-    }
-    currFreqs <- getFrequencies(currCol)
+
+    ####### Calculate the information for the paricular column
+    currFreqs <- getFrequencies(currCol, isAminoAcid, addPseudoCounts = TRUE)
     # uncorrected information
     currInfo <- calcInformation(currFreqs, entropyMethod, isAminoAcid)
-    # max possible if corrected with all samples
-    correctedMax <- max(currInfo - corrections[numSeqs], 0)
-    # corrected with only observed
-    numNonGaps <- length(currCol[currCol != gapCharacter])
-    correctedObserved <- max(currInfo - corrections[numNonGaps], 0)
-    heights <- calcHeights(currFreqs, correctedObserved)
+
+    ###### Make correction if specified
+    if (calcCorrection) {
+      numNonGaps <- length(currCol[currCol != gapCharacter])
+      # no correction has been calculated
+      # TODO: simulated correction?
+      if (corrections[numNonGaps] == 0) {
+        corrections[numNonGaps] <- smallSampleCorrection(numNonGaps,
+                                                         isAminoAcid,
+                                                         simulated = FALSE)
+      }
+      correctionForObserved <- corrections[numNonGaps]
+      correctionForAll <- corrections[numSeqs]
+      # TODO: depending on what kind of correction is used, this needs to be
+      # rewritten
+      correctedInformationObserved <- max(currInfo - correctionForObserved, 0)
+      correctedInformationAll <- max(currInfo - correctionForAll, 0)
+      infoToCalcHeight <- correctedInformationObserved
+    } else {
+      infoToCalcHeight <- currInfo
+    }
+
+    ###### Calculate heights
+    heights <- calcHeights(currFreqs, infoToCalcHeight)
     orderedHeights <- heights[order(heights)]
     currNames <- names(orderedHeights)
     plotColStart <- i - start
     currBottom <- 0
-    # draw TODO: refactor this out
-    if (gapBoxesPosition == "below" && correctedMax != correctedObserved) {
-      gapBoxHeight <- correctedMax - correctedObserved
-      rect(plotColStart, currBottom, plotColStart + 0.95, currBottom + gapBoxHeight, col = "gray87")
-      currBottom <- currBottom + gapBoxHeight
-    }
+
+    ###### Draw out sequence logo
     for (j in 1:length(orderedHeights)) {
       base <- currNames[j]
       height <- orderedHeights[[j]]
@@ -88,10 +111,14 @@ sequenceLogoR <- function(alignment,
                 fill = colors[[base]])
       currBottom <- currBottom + height
     }
-    if (gapBoxesPosition == "above" && correctedMax != correctedObserved) {
-      gapBoxHeight <- correctedMax - correctedObserved
-      rect(plotColStart, currBottom, plotColStart + 0.95, currBottom + gapBoxHeight, col = "gray87")
-      currBottom <- currBottom + gapBoxHeight
+
+    ###### Draw the gap information
+    if (displayGapInfo && calcCorrection) {
+      if (correctedInformationAll != correctedInformationObserved) {
+        gapInformation <- correctedInformationAll - correctedInformationObserved
+        rect(plotColStart, -0.05, plotColStart + 0.95,
+             -gapInformation, col="grey87")
+      }
     }
   }
 }

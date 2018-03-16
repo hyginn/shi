@@ -29,3 +29,18 @@ for (i in 1:length(aa_set)) {
 }
 
 sequenceLogoR(z, theSettings, isAminoAcid = TRUE, start = 200, end = 220, calcCorrection = TRUE)
+
+KLdiv <- function(p, q) {
+  # p and q are two pmfs of discrete probability distributions
+  # with the same outcomes, which are nowhere 0.
+  # Value:  Kullback-Leibler divergence  sum(p * log( p / q))).
+
+  if (length(p) != length(q)) {
+    stop("PANIC: input vector lengths differ!")
+  }
+  if (any(c((p == 0), (q == 0)))) {
+    stop("PANIC: 0's found in input vectors!")
+  }
+
+  return(sum(p * log( p / q )))
+}
