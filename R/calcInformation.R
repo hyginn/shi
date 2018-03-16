@@ -6,13 +6,14 @@
 #' @param freqs frequency table of the residues.
 #' @param entropyMethod method to use to calculate the entropy.
 #' @param isAminoAcid flag to use amino acid specific calculations.
+#' @param refFreqs the reference frequency table to use with kl divergence.
 #' @return A table of frequencies for the residues.
 #' @export
 calcInformation <- function(freqs, entropyMethod = "kl", isAminoAcid = FALSE,
                             refFreqs = NA) {
   allowedMethods <- c("shannon", "kl")
   if (! entropyMethod %in% allowedMethods) {
-    # something warning terminate
+    stop('Unknown entropy method! Use "shannon" or "kl"')
   }
   b <- 4
   if (isAminoAcid) {
@@ -27,7 +28,7 @@ calcInformation <- function(freqs, entropyMethod = "kl", isAminoAcid = FALSE,
     if (is.na(refFreqs)) {
       refFreqs <- rep(1, b) / b
     }
-    entropy <- KLdiv(refFreqs, freqs)
+    entropy <- calcKLdiv(refFreqs, freqs)
     return(entropy)
   }
 }

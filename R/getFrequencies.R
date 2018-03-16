@@ -4,9 +4,9 @@
 #'
 #' Details.
 #' @param column a column from an alignment
+#' @param isAminoAcid lag to use amino acid specific calculations.
 #' @param gapCharacter symbol depicting a gap in the alignment.
-#' @param includeGaps whether to consider gaps part of the frequency
-#' calculation.
+#' @param addPseudoCounts add a small prior to prevent 0 freqs.
 #' @return A table of frequencies for the residues.
 #' @export
 getFrequencies <- function(column, isAminoAcid = FALSE, gapCharacter = "-",

@@ -13,7 +13,7 @@
 #' @param calcCorrection flag to calculate small sample corrections.
 #' @param entropyMethod choice between shannon or kl (kullback leibler) on
 #' calculating the entropy.
-#' @param gapBoxesPosition where to display the gap boxes.
+#' @param displayGapInfo whether to display the gap informations.
 #' @export
 sequenceLogoR <- function(alignment,
                           settingsMap,
@@ -116,8 +116,8 @@ sequenceLogoR <- function(alignment,
     if (displayGapInfo && calcCorrection) {
       if (correctedInformationAll != correctedInformationObserved) {
         gapInformation <- correctedInformationAll - correctedInformationObserved
-        rect(plotColStart, -0.05, plotColStart + 0.95,
-             -gapInformation, col="grey87")
+        graphics::rect(plotColStart, -0.05, plotColStart + 0.95,
+                       -gapInformation, col="grey87")
       }
     }
   }

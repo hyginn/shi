@@ -9,7 +9,7 @@ calcShannonEntropy <- function(freqs) {
   return(total)
 }
 
-KLdiv <- function(p, q) {
+calcKLdiv <- function(p, q) {
   # p and q are two pmfs of discrete probability distributions
   # with the same outcomes, which are nowhere 0.
   # Value:  Kullback-Leibler divergence  sum(p * log( p / q))).

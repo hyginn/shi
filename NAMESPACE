@@ -2,7 +2,6 @@
 
 export(calcInformation)
 export(calcMaxInformation)
-export(calcShannonEntropy)
 export(clineShiftScore)
 export(cpp_codonSplit1)
 export(cpp_codonSplit2)
