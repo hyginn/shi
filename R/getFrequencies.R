@@ -15,7 +15,7 @@ getFrequencies <- function(column, isAminoAcid = FALSE, gapCharacter = "-",
     alphabet <- c("A", "R", "N", "D", "C", "Q", "E", "G", "H", "I",
                   "L", "K", "M", "F", "P", "S", "T", "W", "Y", "V")
   } else {
-    alphabet <- c("A", "C", "T", "G")
+    alphabet <- c("A", "T", "C", "G")
   }
   freqs <- numeric(length(alphabet))
   names(freqs) <- alphabet
