@@ -22,12 +22,12 @@ smallSampleCorrectionClosure <- function(numSeqs,
     closure <- function(numObserveredSamples, info) {
       if (calculated[numObserveredSamples]) {
         currSim <- cache[[numObserveredSamples]]
-        correction <- sum(currSim[currSim <= info]) / length(currSim)
+        correction <- sum(currSim <= info) / length(currSim)
       } else {
         # do simulation for the num observed samples
         currSim <- simFunc(numObserveredSamples)
         cache[[numObserveredSamples]] <<- currSim
-        correction <- sum(currSim[currSim <= info]) / length(currSim)
+        correction <- sum(currSim <= info) / length(currSim)
         calculated[numObserveredSamples] <<- TRUE
       }
       return(correction * info)
