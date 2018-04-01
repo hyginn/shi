@@ -28,7 +28,7 @@ for (i in 1:length(aa_set)) {
   theSettings[[aa_set[i]]] <- someList
 }
 
-sequenceLogoR(z, theSettings, isAminoAcid = TRUE, start = 200, end = 220, calcCorrection = TRUE, entropyMethod = "kl")
+sequenceLogoR(z, theSettings, isAminoAcid = TRUE, start = 200, end = 220, calcCorrection = TRUE, entropyMethod = "shannon", refDistribution = AAref, addPseudoCounts = TRUE)
 
 KLdiv <- function(p, q) {
   # p and q are two pmfs of discrete probability distributions

@@ -1,11 +1,11 @@
 smallSampleCorrectionClosure <- function(numSeqs,
                                          isAminoAcid = FALSE,
-                                         simulated = FALSE,
+                                         simulate = FALSE,
                                          entropyMethod = "kl",
                                          refDistribution,
                                          addPseudoCounts = TRUE) {
   # setup cache
-  if (simulated) {
+  if (simulate) {
     cache <- list()
   } else {
     cache <- numeric(numSeqs)
@@ -13,7 +13,7 @@ smallSampleCorrectionClosure <- function(numSeqs,
   calculated <- logical(length = numSeqs)
 
   # generate the closure
-  if (simulated) {
+  if (simulate) {
     simFunc <- simulationClosure(numTrials = 10000,
                                  isAminoAcid,
                                  refDistribution,

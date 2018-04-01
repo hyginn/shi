@@ -22,6 +22,7 @@ sequenceLogoR <- function(alignment,
                           end = 0,
                           gapCharacter = '-',
                           calcCorrection = FALSE,
+                          simulate = FALSE,
                           entropyMethod = "kl",
                           displayGapInfo = FALSE,
                           refDistribution,
@@ -75,6 +76,7 @@ sequenceLogoR <- function(alignment,
   if (calcCorrection) {
     smallSampleCorrectionFunc <- smallSampleCorrectionClosure(numSeqs,
                                                               isAminoAcid,
+                                                              simulate,
                                                               entropyMethod,
                                                               refDistribution,
                                                               addPseudoCounts)
@@ -85,7 +87,8 @@ sequenceLogoR <- function(alignment,
     currCol <- Biostrings::subseq(alignment, i, i)
 
     ####### Calculate the information for the paricular column
-    currFreqs <- getFrequencies(currCol, isAminoAcid, addPseudoCounts)
+    currFreqs <- getFrequencies(currCol, isAminoAcid,
+                                addPseudoCounts=addPseudoCounts)
     # uncorrected information
     currInfo <- calcInformation(currFreqs, entropyMethod, isAminoAcid)
 
