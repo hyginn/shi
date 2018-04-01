@@ -197,3 +197,25 @@ for (i in 11:21) {
   numObs <- sum(currCol != "-")
   correction2(numObs, info)
 }
+
+
+# sequence logo portion
+aa_set <- names(AMINO_ACID_CODE)
+
+theSettings <- list()
+randomColors <- colorRampPalette(c("#C27E7E", "#816EBA", "#758AC9", "#82C9B6"))(length(aa_set))
+
+
+for (i in 1:length(aa_set)) {
+  someList <- list()
+  someList[["base"]] <- aa_set[i]
+  someList[["color"]] <-randomColors[i]
+  theSettings[[aa_set[i]]] <- someList
+}
+
+# no correction
+sequenceLogoR(alignment, theSettings, isAminoAcid = TRUE, start = 1, end = 100, entropyMethod = "shannon", refDistribution = AAref, addPseudoCounts = TRUE, simulate = FALSE)
+# simulated correction
+sequenceLogoR(alignment, theSettings, isAminoAcid = TRUE, start = 1, end = 100, calcCorrection = TRUE, entropyMethod = "shannon", refDistribution = AAref, addPseudoCounts = TRUE, simulate = TRUE)
+# simple correction
+sequenceLogoR(alignment, theSettings, isAminoAcid = TRUE, start = 1, end = 100, calcCorrection = TRUE, entropyMethod = "shannon", refDistribution = AAref, addPseudoCounts = TRUE, simulate = FALSE)
