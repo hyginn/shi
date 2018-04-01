@@ -1,5 +1,5 @@
 # sequenceLogoR.R
-
+# TODO: add doc for refDist and pseudocounts
 #' \code{sequenceLogoR} generate a sequence logo from a multiple sequence
 #' alignment
 #'
@@ -17,13 +17,24 @@
 #' @export
 sequenceLogoR <- function(alignment,
                           settingsMap,
-                          isAminoAcid = FALSE,
+                          isAminoAcid,
                           start = 1,
                           end = 0,
                           gapCharacter = '-',
                           calcCorrection = FALSE,
-                          entropyMethod = "shannon",
-                          displayGapInfo = FALSE) {
+                          entropyMethod = "kl",
+                          displayGapInfo = FALSE,
+                          refDistribution,
+                          addPseudoCounts) {
+  ##### Param checking
+  if (missing(isAminoAcid)) {
+    stop("isAminoAcid is not supplied!")
+  }
+  if (displayGapInfo && !calcCorrection) {
+    stop("Can not show gap info without calculating correction!")
+  }
+
+
   # TODO: check if gapBoxesPosition is valid
   ###### generate glyphs
   glyphs <- list()
@@ -34,9 +45,15 @@ sequenceLogoR <- function(alignment,
     # TODO: random color if not found
     colors[[base]] <- item$color
   }
+
+  ###### Generate equiprobable dist if not supplied and simulated
+
+  ###### Generate sequence logo for the whole alignment end is not specified
   if (end == 0) {
     end <- length(alignment[[1]])
   }
+
+
   totalCols <- end - start + 1
   maxInfo <- calcMaxInformation(isAminoAcid)
   numSeqs <- length(alignment)
@@ -54,13 +71,13 @@ sequenceLogoR <- function(alignment,
        ylim = c(yMin, maxInfo),
        type = "n")
 
-  ###### Generate list to keep track of calculated corrections
-  # correction?
+  ###### Generate correction closure function which contains an internal cache
   if (calcCorrection) {
-    corrections <- numeric(numSeqs)
-    # calculate correction when all sequences are considered
-    corrections[numSeqs] <- smallSampleCorrection(numSeqs, isAminoAcid,
-                                                  simulated = FALSE)
+    smallSampleCorrectionFunc <- smallSampleCorrectionClosure(numSeqs,
+                                                              isAminoAcid,
+                                                              entropyMethod,
+                                                              refDistribution,
+                                                              addPseudoCounts)
   }
 
   ###### iterate though all columns
@@ -68,27 +85,15 @@ sequenceLogoR <- function(alignment,
     currCol <- Biostrings::subseq(alignment, i, i)
 
     ####### Calculate the information for the paricular column
-    currFreqs <- getFrequencies(currCol, isAminoAcid, addPseudoCounts = TRUE)
+    currFreqs <- getFrequencies(currCol, isAminoAcid, addPseudoCounts)
     # uncorrected information
     currInfo <- calcInformation(currFreqs, entropyMethod, isAminoAcid)
 
     ###### Make correction if specified
     if (calcCorrection) {
-      numNonGaps <- length(currCol[currCol != gapCharacter])
-      # no correction has been calculated
-      # TODO: simulated correction?
-      if (corrections[numNonGaps] == 0) {
-        corrections[numNonGaps] <- smallSampleCorrection(numNonGaps,
-                                                         isAminoAcid,
-                                                         simulated = FALSE)
-      }
-      correctionForObserved <- corrections[numNonGaps]
-      correctionForAll <- corrections[numSeqs]
-      # TODO: depending on what kind of correction is used, this needs to be
-      # rewritten
-      correctedInformationObserved <- max(currInfo - correctionForObserved, 0)
-      correctedInformationAll <- max(currInfo - correctionForAll, 0)
-      infoToCalcHeight <- correctedInformationObserved
+      numObserved <- length(currCol[currCol != gapCharacter])
+      correctedForObserved <- smallSampleCorrectionFunc(numObserved, currInfo)
+      infoToCalcHeight <- max(correctedForObserved, 0)
     } else {
       infoToCalcHeight <- currInfo
     }

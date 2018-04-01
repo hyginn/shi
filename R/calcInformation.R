@@ -10,7 +10,7 @@
 #' @return A table of frequencies for the residues.
 #' @export
 calcInformation <- function(freqs, entropyMethod = "kl", isAminoAcid = FALSE,
-                            refFreqs = NA) {
+                            refFreqs) {
   allowedMethods <- c("shannon", "kl")
   if (! entropyMethod %in% allowedMethods) {
     stop('Unknown entropy method! Use "shannon" or "kl"')
@@ -25,10 +25,10 @@ calcInformation <- function(freqs, entropyMethod = "kl", isAminoAcid = FALSE,
     return(maxInfo - entropy)
   } else if (entropyMethod == "kl") {
     # generate equiprobable ref
-    if (is.na(refFreqs)) {
+    if (missing(refFreqs)) {
       refFreqs <- rep(1, b) / b
     }
-    entropy <- calcKLdiv(refFreqs, freqs)
+    entropy <- calcKLdiv(freqs, refFreqs)
     return(entropy)
   }
 }
