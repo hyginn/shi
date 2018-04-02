@@ -15,7 +15,8 @@
 #' @return A closure function to generate simulations of size closure input
 #' parameter, numSamples, numTrials times.
 simulationClosure <- function(numTrials,
-                              isAminoAcid,
+                              isAminoAcid = FALSE,
+                              gapCharacter = "-",
                               refDistribution,
                               entropyMethod,
                               pseudoCountsValue = 0) {
@@ -26,7 +27,8 @@ simulationClosure <- function(numTrials,
     alphabet <- c("A", "T", "C", "G")
   }
   if (entropyMethod == "kl" && pseudoCountsValue == 0) {
-    warning("Setting pseudoCountsValue to non zero to preven zero frequencies!")
+    msg <- "Setting pseudoCountsValue to non zero to prevent zero frequencies!"
+    warning(msg)
     pseudoCountsValue <- 0.001
   }
   closure <- function(numSamples) {
@@ -36,13 +38,13 @@ simulationClosure <- function(numTrials,
                     size=numSamples,
                     prob=refDistribution,
                     replace=TRUE)
-      # TODO: pass gap character hee
       freqs <- getFrequencies(obs,
                               isAminoAcid,
-                              pseudoCountsValue=pseudoCountsValue)
+                              gapCharacter,
+                              pseudoCountsValue)
       IObs[i] <- calcInformation(freqs,
-                                 entropyMethod,
                                  isAminoAcid,
+                                 entropyMethod,
                                  refDistribution)
     }
     return(IObs)

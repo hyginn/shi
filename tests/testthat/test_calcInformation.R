@@ -30,7 +30,7 @@ test_that("proper entropy method is being used", {
   calcInformation(freqs, entropyMethod = "shannon")
   expect_called(mockShannonEntropy, 1)
   expect_called(mockKLdiv, 0)
-  calcInformation(freqs, entropyMethod = "kl")
+  calcInformation(freqs, entropyMethod = "kl", refDistribution = rep(1, 4) / 4)
   expect_called(mockShannonEntropy, 1)
   expect_called(mockKLdiv, 1)
 })
@@ -40,4 +40,33 @@ test_that("invalid entropy method will be caught", {
                'Unknown entropy method! Use "shannon" or "kl"')
 })
 
-# TODO: write integrated tests with mocks
+test_that("an equiprobable distribution will be used for kl if not supplied", {
+  mockKLdiv <- mock(0)
+  stub(calcInformation, "calcKLdiv", mockKLdiv)
+  expect_warning(calcInformation(freqs, entropyMethod = "kl"))
+  args <- mock_args(mockKLdiv)
+  expect_equal(args[[1]][[2]], rep(1, 4) / 4)
+})
+
+test_that("proper information is being returned", {
+  mockShannonEntropy <- mock(1)
+  mockMaxInformation <- mock(2)
+  mockKLdiv <- mock(4)
+  stub(calcInformation, "calcShannonEntropy", mockShannonEntropy)
+  stub(calcInformation, "calcMaxInformation", mockMaxInformation)
+  stub(calcInformation, "calcKLdiv", mockKLdiv)
+  expect_called(mockShannonEntropy, 0)
+  expect_called(mockMaxInformation, 0)
+  expect_called(mockKLdiv, 0)
+  shanInfo <- calcInformation(freqs, entropyMethod = "shannon")
+  expect_called(mockShannonEntropy, 1)
+  expect_called(mockMaxInformation, 1)
+  expect_called(mockKLdiv, 0)
+  expect_equal(shanInfo, 2 - 1)
+  klInfo <- calcInformation(freqs, entropyMethod = "kl",
+                            refDistribution = rep(1, 4) / 4)
+  expect_called(mockShannonEntropy, 1)
+  expect_called(mockMaxInformation, 1)
+  expect_called(mockKLdiv, 1)
+  expect_equal(klInfo, 4)
+})

@@ -78,6 +78,7 @@ sequenceLogoR <- function(alignment,
   if (calcCorrection) {
     smallSampleCorrectionFunc <- smallSampleCorrectionClosure(numSeqs,
                                                               isAminoAcid,
+                                                              gapCharacter,
                                                               simulate,
                                                               entropyMethod,
                                                               refDistribution,

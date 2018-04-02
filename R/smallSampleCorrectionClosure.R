@@ -17,10 +17,11 @@
 #' @seealso \url{https://en.wikipedia.org/wiki/Sequence_logo}
 smallSampleCorrectionClosure <- function(numSeqs,
                                          isAminoAcid = FALSE,
+                                         gapCharacter = "-",
                                          simulate = FALSE,
                                          entropyMethod = "kl",
                                          refDistribution,
-                                         psuedoCountsValue) {
+                                         pseudoCountsValue = 0) {
   # setup cache
   if (simulate) {
     cache <- list()
@@ -34,9 +35,10 @@ smallSampleCorrectionClosure <- function(numSeqs,
     # A simulation closure is generated to have consistent simulations
     simFunc <- simulationClosure(numTrials = 10000,
                                  isAminoAcid,
-                                 refDistribution,
+                                 gapCharacter,
                                  entropyMethod,
-                                 addPseudoCounts)
+                                 refDistribution,
+                                 pseudoCountsValue)
     closure <- function(numObserveredSamples, info) {
       if (calculated[numObserveredSamples]) {
         currSim <- cache[[numObserveredSamples]]

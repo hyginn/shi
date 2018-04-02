@@ -27,10 +27,10 @@ test_that("gap chracters will be ignored", {
   expect_equal(freqs, expectedFreqs)
 })
 
-test_that("psuedo counts will prevent 0 freqs", {
+test_that("pseudo counts will prevent 0 freqs", {
   currCol <- c("A", "A", "C", "G")
-  freqs1 <- getFrequencies(currCol, isAminoAcid = FALSE, addPseudoCounts = TRUE)
-  freqs2 <- getFrequencies(currCol, isAminoAcid = TRUE, addPseudoCounts = TRUE)
-  expect_equal(sum(freqs1[freqs1 == 0]), 0)
-  expect_equal(sum(freqs2[freqs2 == 0]), 0)
+  freqs1 <- getFrequencies(currCol, isAminoAcid = FALSE, pseudoCountsValue = 0)
+  freqs2 <- getFrequencies(currCol, isAminoAcid = FALSE, pseudoCountsValue = 0.1)
+  expect_equal(sum(freqs1 == 0), 1)
+  expect_equal(sum(freqs2 == 0), 0)
 })

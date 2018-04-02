@@ -20,20 +20,22 @@ calcInformation <- function(freqs, isAminoAcid = FALSE, entropyMethod,
   if (! entropyMethod %in% allowedMethods) {
     stop('Unknown entropy method! Use "shannon" or "kl"')
   }
-  b <- 4
   if (isAminoAcid) {
     b <- 20
+  } else {
+    b <- 4
   }
-  maxInfo <- calcMaxInformation(isAminoAcid)
   if (entropyMethod == "shannon") {
+    maxInfo <- calcMaxInformation(isAminoAcid)
     entropy <- calcShannonEntropy(freqs)
     return(maxInfo - entropy)
   } else if (entropyMethod == "kl") {
     # generate equiprobable ref
-    if (missing(refFreqs)) {
-      refFreqs <- rep(1, b) / b
+    if (missing(refDistribution)) {
+      warning("No refDistribution supplied, using equiprobable distribution!")
+      refDistribution <- rep(1, b) / b
     }
-    entropy <- calcKLdiv(freqs, refFreqs)
+    entropy <- calcKLdiv(freqs, refDistribution)
     return(entropy)
   }
 }

@@ -17,4 +17,19 @@ test_that("able to calculate shannon entropy", {
   expect_equal(entropy, expectedEntropy)
 })
 
-# TODO: write KL test
+test_that("able to calculate Kullback Leibler divergence", {
+  freqs <- numeric(4)
+  names(freqs) <- c("A", "T", "C", "G")
+  freqs["A"] <- 0.4
+  freqs["T"] <- 0.25
+  freqs["C"] <- 0.25
+  freqs["G"] <- 0.1
+  equiProb <- rep(1, 4) / 4
+  names(equiProb) <- names(freqs)
+  entropy <- calcKLdiv(equiProb, freqs)
+  expectedEntropy <- (0.25 * log(0.25 / 0.4)) +
+                     (0.25 * log(0.25 / 0.25)) +
+                     (0.25 * log(0.25 / 0.25)) +
+                     (0.25 * log(0.25 / 0.1))
+  expect_equal(entropy, expectedEntropy)
+})
