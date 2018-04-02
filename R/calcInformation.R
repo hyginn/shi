@@ -2,15 +2,20 @@
 
 #' \code{calcInformation} calculate the information for a column.
 #'
-#' Details.
+#' From a given \code{freqs} information can be calculated from calculating
+#' the information loss using shannon entropy or the relative entropy using
+#' Kullback–Leibler divergence.
+#'
 #' @param freqs frequency table of the residues.
-#' @param entropyMethod method to use to calculate the entropy.
-#' @param isAminoAcid flag to use amino acid specific calculations.
-#' @param refFreqs the reference frequency table to use with kl divergence.
+#' @inheritParams sequenceLogoR
 #' @return A table of frequencies for the residues.
+#' @seealso \url{https://en.wikipedia.org/wiki/Entropy_(information_theory)}
+#' @seealso \url{https://en.wikipedia.org/wiki/Kullback–Leibler_divergence}
+#' @seealso \code{\link{calcShannonEntropy}}
+#' @seealso \code{\link{calcKLdiv}}
 #' @export
-calcInformation <- function(freqs, entropyMethod = "kl", isAminoAcid = FALSE,
-                            refFreqs) {
+calcInformation <- function(freqs, isAminoAcid = FALSE, entropyMethod,
+                            refDistribution) {
   allowedMethods <- c("shannon", "kl")
   if (! entropyMethod %in% allowedMethods) {
     stop('Unknown entropy method! Use "shannon" or "kl"')

@@ -1,9 +1,26 @@
+# smallSampleCorrectionClosure.R
+
+#' \code{smallSampleCorrectionClosure} generate a closure that will have the
+#' same parameters for future small smaple correction calculations.
+#'
+#' To have a simple and consistent way of calculating the small sample
+#' corrections of the same parameters (whether it's amino acids, to simulate,
+#' entropy method, the reference distribution to calculate against, and the
+#' amount to use for pseudo counts) as well to cache prior calculations, a
+#' closure is generated. The only variable that differ between future calls is
+#' the number of observed samples and the information to correct. Caching is
+#' required because subsequent simulations for the same sample size is
+#' reduendant.
+#'
+#' @param numSeqs the number of sequence for the alignment.
+#' @inheritParams sequenceLogoR
+#' @seealso \url{https://en.wikipedia.org/wiki/Sequence_logo}
 smallSampleCorrectionClosure <- function(numSeqs,
                                          isAminoAcid = FALSE,
                                          simulate = FALSE,
                                          entropyMethod = "kl",
                                          refDistribution,
-                                         addPseudoCounts = TRUE) {
+                                         psuedoCountsValue) {
   # setup cache
   if (simulate) {
     cache <- list()
@@ -14,6 +31,7 @@ smallSampleCorrectionClosure <- function(numSeqs,
 
   # generate the closure
   if (simulate) {
+    # A simulation closure is generated to have consistent simulations
     simFunc <- simulationClosure(numTrials = 10000,
                                  isAminoAcid,
                                  refDistribution,

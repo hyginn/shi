@@ -1,16 +1,14 @@
 # calcMaxInformation.R
 
-#' \code{calcMaxInformation} calculate the maximum information for a column in a
-#' sequence logo.
+#' \code{calcMaxInformation} calculate the maximum information for shannon
+#' entropy sequence logos.
 #'
-#' Details.
-#' @param isAminoAcid flag to use amino acid specific calculations.
+#' @inheritParams sequenceLogoR
 #' @return max bits for a single column in a sequence logo.
-#' @export
 calcMaxInformation <- function(isAminoAcid=FALSE) {
-  b <- 4
   if (isAminoAcid) {
-    b <- 20
+    return(log2(20))
+  } else {
+    return(log2(4))
   }
-  return(log2(b))
 }

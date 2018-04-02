@@ -1,17 +1,33 @@
+# simulationClosure.R
+
+#' \code{simulationClosure} generate a closure that will have the same
+#' parameters for future simulation calls.
+#'
+#' To have a simple and conistent way of generating simulations of the same
+#' parameters (same number of trials, sample from amino acids
+#' or nucleotides, use probabilities from a reference distribution, entropy
+#' method, and the amount to use for pseudo counts), a closure is generated. The
+#' only variable that differ between future calls is the size of the samples per
+#' trial.
+#'
+#' @param numTrials the number of times a sample should be made.
+#' @inheritParams sequenceLogoR
+#' @return A closure function to generate simulations of size closure input
+#' parameter, numSamples, numTrials times.
 simulationClosure <- function(numTrials,
                               isAminoAcid,
                               refDistribution,
                               entropyMethod,
-                              addPseudoCounts = TRUE) {
+                              pseudoCountsValue = 0) {
   if (isAminoAcid) {
     alphabet <- c("A", "R", "N", "D", "C", "Q", "E", "G", "H", "I",
                   "L", "K", "M", "F", "P", "S", "T", "W", "Y", "V")
   } else {
     alphabet <- c("A", "T", "C", "G")
   }
-  if (entropyMethod == "kl" && !addPseudoCounts) {
-    warning("Forcing addPseudoCounts to TRUE to prevent zero frequencies!")
-    addPseudoCounts <- TRUE
+  if (entropyMethod == "kl" && pseudoCountsValue == 0) {
+    warning("Setting pseudoCountsValue to non zero to preven zero frequencies!")
+    pseudoCountsValue <- 0.001
   }
   closure <- function(numSamples) {
     IObs <- numeric(numTrials)
@@ -20,10 +36,10 @@ simulationClosure <- function(numTrials,
                     size=numSamples,
                     prob=refDistribution,
                     replace=TRUE)
-      # prob need to pass gapchar here
+      # TODO: pass gap character hee
       freqs <- getFrequencies(obs,
                               isAminoAcid,
-                              addPseudoCounts=addPseudoCounts)
+                              pseudoCountsValue=pseudoCountsValue)
       IObs[i] <- calcInformation(freqs,
                                  entropyMethod,
                                  isAminoAcid,

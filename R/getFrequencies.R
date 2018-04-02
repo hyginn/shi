@@ -2,15 +2,19 @@
 
 #' \code{getFrequencies} get frequencies of the residues for a column.
 #'
-#' Details.
-#' @param column a column from an alignment
-#' @param isAminoAcid lag to use amino acid specific calculations.
-#' @param gapCharacter symbol depicting a gap in the alignment.
-#' @param addPseudoCounts add a small prior to prevent 0 freqs.
+#' Generate a list that contains the frequencies of the residues given a vector
+#' of residues. Pseudo counts can be added to each residue to prevent negative
+#' frequencies.
+#'
+#' @param column a vector of residues to calculate the frequencies for.
+#' @inheritParams sequenceLogoR
 #' @return A table of frequencies for the residues.
+#' @seealso \url{https://en.wikipedia.org/wiki/Jeffreys_prior}
 #' @export
-getFrequencies <- function(column, isAminoAcid = FALSE, gapCharacter = "-",
-                           addPseudoCounts = FALSE) {
+getFrequencies <- function(column,
+                           isAminoAcid = FALSE,
+                           gapCharacter = "-",
+                           pseudoCountsValue = 0) {
   if (isAminoAcid) {
     alphabet <- c("A", "R", "N", "D", "C", "Q", "E", "G", "H", "I",
                   "L", "K", "M", "F", "P", "S", "T", "W", "Y", "V")
@@ -29,8 +33,6 @@ getFrequencies <- function(column, isAminoAcid = FALSE, gapCharacter = "-",
       freqs[residue] <- freqs[residue] + 1
     }
   }
-  if (addPseudoCounts) {
-    freqs <- freqs + 0.001
-  }
+  freqs <- freqs + pseudoCountsValue
   return(freqs / sum(freqs))
 }

@@ -1,3 +1,10 @@
+# calcEntropy.R
+
+#' \code{calcShannonEntropy} calculate the shannon entropy from a frequency
+#' table.
+#'
+#' @inheritParams calcInformation
+#' @seealso \url{https://en.wikipedia.org/wiki/Entropy_(information_theory)}
 calcShannonEntropy <- function(freqs) {
   total <- 0
   for (i in seq_along(freqs)) {
@@ -9,6 +16,14 @@ calcShannonEntropy <- function(freqs) {
   return(total)
 }
 
+#' \code{calcKLdiv} calculate the Kullback-Leibler divergence.
+#'
+#' \code{p} and \code{q} are two pmfs of discrete probability distributions
+#' with the same outcomes, which are nowhere 0.
+#'
+#' @param p first pmf
+#' @param q second pmf
+#' @seealso \url{https://en.wikipedia.org/wiki/Kullback–Leibler_divergence}
 calcKLdiv <- function(p, q) {
   # p and q are two pmfs of discrete probability distributions
   # with the same outcomes, which are nowhere 0.

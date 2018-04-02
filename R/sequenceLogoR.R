@@ -1,9 +1,8 @@
 # sequenceLogoR.R
-# TODO: add doc for refDist and pseudocounts
+
 #' \code{sequenceLogoR} generate a sequence logo from a multiple sequence
 #' alignment
 #'
-#' Details.
 #' @param alignment a multiple sequence alignment
 #' @param settingsMap something something color to base.
 #' @param isAminoAcid flag to use amino acid specific calculations.
@@ -14,6 +13,9 @@
 #' @param entropyMethod choice between shannon or kl (kullback leibler) on
 #' calculating the entropy.
 #' @param displayGapInfo whether to display the gap informations.
+#' @param refDistribution a table containing the distribution to sample from
+#' and/or to calculate the divergence.
+#' @param pseudoCountsValue add a small prior to prevent 0 freqs.
 #' @export
 sequenceLogoR <- function(alignment,
                           settingsMap,
@@ -90,7 +92,8 @@ sequenceLogoR <- function(alignment,
     currFreqs <- getFrequencies(currCol, isAminoAcid,
                                 addPseudoCounts=addPseudoCounts)
     # uncorrected information
-    currInfo <- calcInformation(currFreqs, entropyMethod, isAminoAcid)
+    currInfo <- calcInformation(currFreqs, isAminoAcid,
+                                entropyMethod, refDistribution)
 
     ###### Make correction if specified
     if (calcCorrection) {

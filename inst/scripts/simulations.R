@@ -4,7 +4,7 @@
 
 # required sourced funcions
 
-simulationClosure <- function(numTrials,
+modSimulationClosure <- function(numTrials,
                               isAminoAcid,
                               refDistribution,
                               entropyMethod,
@@ -42,7 +42,7 @@ simulationClosure <- function(numTrials,
 # the smallSampleCorreciton in question
 # modified the simulation portion to show plots
 
-smallSampleCorrectionClosure <- function(numSeqs,
+modSmallSampleCorrectionClosure <- function(numSeqs,
                                          isAminoAcid = FALSE,
                                          simulate = FALSE,
                                          entropyMethod = "kl",
@@ -58,7 +58,7 @@ smallSampleCorrectionClosure <- function(numSeqs,
 
   # generate the closure
   if (simulate) {
-    simFunc <- simulationClosure(numTrials = 10000,
+    simFunc <- modSimulationClosure(numTrials = 10000,
                                  isAminoAcid,
                                  refDistribution,
                                  entropyMethod,
@@ -154,14 +154,14 @@ equiProb <- rep(1, 20) / 20
 names(equiProb) <- names(AAref)
 
 # func setup
-correction1 <- smallSampleCorrectionClosure(length(alignment),
+correction1 <- modSmallSampleCorrectionClosure(length(alignment),
                                             isAminoAcid = TRUE,
                                             simulate = TRUE,
                                             entropyMethod = "kl",
                                             refDistribution = AAref,
                                             addPseudoCounts = TRUE)
 
-correction2 <- smallSampleCorrectionClosure(length(alignment),
+correction2 <- modSmallSampleCorrectionClosure(length(alignment),
                                             isAminoAcid = TRUE,
                                             simulate = TRUE,
                                             entropyMethod = "kl",
