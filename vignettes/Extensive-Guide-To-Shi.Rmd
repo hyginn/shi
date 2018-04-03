@@ -128,9 +128,10 @@ residues <- c("A", "R", "N", "D", "C", "Q", "E", "G", "H", "I",
               "L", "K", "M", "F", "P", "S", "T", "W", "Y", "V")
 characters <- c("試", "し", "打", "ち", "が","で", "き", "ま", "す", "。",
                 "文", "字", "の", "太", "さ", "や", "サ", "イ", "ズ", "の")
-japaneseCharacters <- generateSettingsMap(residues, characters = characters, pathToFont = system.file("extdata/ipaexm00301", "ipaexm.ttf", package = "shi"))
+japaneseCharacters <- generateSettingsMap(residues, characters = characters, pathToFont = system.file("extdata/sawarbi", "SawarabiMincho-Regular.ttf", package = "shi"))
 sequenceLogoR(partialAlignment, settingsMap = japaneseCharacters, isAminoAcid = TRUE)
 ```
+
 
 
 ## References
