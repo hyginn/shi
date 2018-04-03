@@ -25,10 +25,10 @@ sequenceLogoR <- function(alignment,
                           gapCharacter = '-',
                           calcCorrection = FALSE,
                           simulate = FALSE,
-                          entropyMethod = "kl",
+                          entropyMethod = "shannon",
                           displayGapInfo = FALSE,
                           refDistribution,
-                          addPseudoCounts) {
+                          pseudoCountsValue = 0) {
   ##### Param checking
   if (missing(isAminoAcid)) {
     stop("isAminoAcid is not supplied!")
@@ -36,20 +36,26 @@ sequenceLogoR <- function(alignment,
   if (displayGapInfo && !calcCorrection) {
     stop("Can not show gap info without calculating correction!")
   }
+  if (missing(settingsMap)) {
+    if (isAminoAcid) {
+      alphabet <- c("A", "R", "N", "D", "C", "Q", "E", "G", "H", "I",
+                    "L", "K", "M", "F", "P", "S", "T", "W", "Y", "V")
+    } else {
+      alphabet <- c("A", "T", "C", "G")
+    }
+    settingsMap <- generateSettingsMap(alphabet)
+  }
 
-
-  # TODO: check if gapBoxesPosition is valid
   ###### generate glyphs
   glyphs <- list()
   colors <- list()
-  for (item in settingsMap) {
-    base <- item$base
-    glyphs[[base]] <- makeGlyph(base)
-    # TODO: random color if not found
-    colors[[base]] <- item$color
+  for (residueSetting in settingsMap$residueSettings) {
+    residue <- residueSetting$residue
+    character <- residueSetting$character
+    color <- residueSetting$color
+    glyphs[[residue]] <- makeGlyph(character, settingsMap$font)
+    colors[[residue]] <- color
   }
-
-  ###### Generate equiprobable dist if not supplied and simulated
 
   ###### Generate sequence logo for the whole alignment end is not specified
   if (end == 0) {
@@ -69,10 +75,12 @@ sequenceLogoR <- function(alignment,
     }
     yMin <- -maxInfo
   }
-  graphics::plot(0, 0,
-       xlim = c(0, totalCols),
+  graphics::plot(start, 0,
+       xlim = c(start, end + 1),
        ylim = c(yMin, maxInfo),
-       type = "n")
+       type = "n",
+       xlab = NULL,
+       ylab = NULL)
 
   ###### Generate correction closure function which contains an internal cache
   if (calcCorrection) {
@@ -82,7 +90,7 @@ sequenceLogoR <- function(alignment,
                                                               simulate,
                                                               entropyMethod,
                                                               refDistribution,
-                                                              addPseudoCounts)
+                                                              pseudoCountsValue)
   }
 
   ###### iterate though all columns
@@ -91,7 +99,8 @@ sequenceLogoR <- function(alignment,
 
     ####### Calculate the information for the paricular column
     currFreqs <- getFrequencies(currCol, isAminoAcid,
-                                addPseudoCounts=addPseudoCounts)
+                                gapCharacter, pseudoCountsValue)
+
     # uncorrected information
     currInfo <- calcInformation(currFreqs, isAminoAcid,
                                 entropyMethod, refDistribution)
@@ -109,7 +118,6 @@ sequenceLogoR <- function(alignment,
     heights <- calcHeights(currFreqs, infoToCalcHeight)
     orderedHeights <- heights[order(heights)]
     currNames <- names(orderedHeights)
-    plotColStart <- i - start
     currBottom <- 0
 
     ###### Draw out sequence logo
@@ -118,8 +126,8 @@ sequenceLogoR <- function(alignment,
       height <- orderedHeights[[j]]
       # bbox width should be settable
       glyphPoly(glyphs[[base]],
-                bbox = c(plotColStart, currBottom,
-                         plotColStart + 0.95, currBottom + height),
+                bbox = c(i, currBottom,
+                         i + 0.95, currBottom + height),
                 fill = colors[[base]])
       currBottom <- currBottom + height
     }

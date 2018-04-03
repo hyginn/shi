@@ -1,7 +1,9 @@
 ---
 title: "Extensive Guide to Shi"
 author: "Adriel Martinez"
-output: rmarkdown::html_vignette
+output:
+  rmarkdown::html_vignette:
+    fig_caption: yes
 vignette: >
   %\VignetteIndexEntry{Vignette Title}
   %\VignetteEngine{knitr::rmarkdown}
@@ -14,6 +16,8 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+knitr::opts_chunk$set(fig.width=7, fig.height=5) 
+library(shi)
 ```
 
 ## Introduction
@@ -32,6 +36,8 @@ The motivation behind this package is not the lack of sequence logos package in 
 ## Using shi
 
 Using shi is simple as loading as calling `sequenceLogoR` with the multiple aligned sequence and specifying whether the inputs are amino acids or nucleotides. The default parameters should generate a traditional sequence logo.
+
+### Quickstart
 
 First of all, we need a multiple sequence alignment to feed in. I will be using the example sequence from the `msa` package, create a multiple sequence alignment, and transform it into an `AAStringSet`.
 
@@ -58,11 +64,72 @@ myFirstAlignment
 ```{r}
 alignment <- AAStringSet(myFirstAlignment)
 alignment
+partialAlignment <- subseq(alignment, start = 220, end = 240)
+partialAlignment
 ```
 
 Once we have our alignment, we just feed it to `sequenceLogoR`.
+```{r message=FALSE, warning=FALSE}
+sequenceLogoR(partialAlignment, isAminoAcid = TRUE)
+```
+
+### Customizing the residue display
+
+Currently, the customizations that were possible, in regards of residue display, were being able to set the colors per residue, being able to set which character to represent a residue, and which font to use. A settings map must be generated and fed into `sequenceLogoR`.
+
+The default settings were to not display different characters for the residues and to use a color pallete (`colorRampPalette(c("#C27E7E", "#816EBA", "#758AC9", "#82C9B6"))`)
+
 ```{r}
-sequenceLogoR(alignment, isAminoAcid = TRUE)
+generateSettingsMap
+```
+
+#### Different Colors
+
+Since the underlying plotting system for the sequence logos is just the native R plotting system, any valid R colors can be used.
+
+```{r message=FALSE, warning=FALSE}
+residues <- c("A", "R", "N", "D", "C", "Q", "E", "G", "H", "I",
+              "L", "K", "M", "F", "P", "S", "T", "W", "Y", "V")
+randomColors <- colorRampPalette(c("blue", "red", "green"))(length(residues))
+differentColors <- generateSettingsMap(residues, colors = randomColors)
+sequenceLogoR(partialAlignment, settingsMap = differentColors, isAminoAcid = TRUE)
+```
+
+#### Different Font
+
+Different fonts can be used to generate the glyphs for the sequence logo. The packaged and default font is `NotoSans-Regular` acquired from [here](https://github.com/google/fonts/tree/master/ofl/notosans). Inlcuded with the NotoSans family is `NotoSans-Italic`.
+
+```{r}
+residues <- c("A", "R", "N", "D", "C", "Q", "E", "G", "H", "I",
+              "L", "K", "M", "F", "P", "S", "T", "W", "Y", "V")
+italicsCharacters <- generateSettingsMap(residues, pathToFont =
+                                           system.file("extdata/notosans",
+                                              "NotoSans-Italic.ttf",
+                                              package = "shi"))
+sequenceLogoR(partialAlignment, settingsMap = italicsCharacters, isAminoAcid = TRUE)
+```
+
+
+#### Different Characters
+
+As long as the supplied font can support the character, there won't be a problem on using it instead of the residue character. 
+
+```{r, fig.cap="An example with greek characters."}
+residues <- c("A", "R", "N", "D", "C", "Q", "E", "G", "H", "I",
+              "L", "K", "M", "F", "P", "S", "T", "W", "Y", "V")
+characters <- c("α", "β", "γ", "δ", "ε", "ζ", "η", "θ", "ι", "κ",
+                "λ", "μ", "ν", "ξ", "ο", "π", "ρ", "σ", "τ", "υ")
+greekCharacters <- generateSettingsMap(residues, characters = characters)
+sequenceLogoR(partialAlignment, settingsMap = greekCharacters, isAminoAcid = TRUE)
+```
+
+```{r, fig.cap="An example with Japanese characters."}
+residues <- c("A", "R", "N", "D", "C", "Q", "E", "G", "H", "I",
+              "L", "K", "M", "F", "P", "S", "T", "W", "Y", "V")
+characters <- c("試", "し", "打", "ち", "が","で", "き", "ま", "す", "。",
+                "文", "字", "の", "太", "さ", "や", "サ", "イ", "ズ", "の")
+japaneseCharacters <- generateSettingsMap(residues, characters = characters, pathToFont = system.file("extdata/ipaexm00301", "ipaexm.ttf", package = "shi"))
+sequenceLogoR(partialAlignment, settingsMap = japaneseCharacters, isAminoAcid = TRUE)
 ```
 
 
