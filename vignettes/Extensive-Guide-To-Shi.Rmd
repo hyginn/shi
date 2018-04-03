@@ -30,3 +30,40 @@ Shi (Sequence alignment Handling and Inspection) as well as shì (視) to inspec
 The motivation behind this package is not the lack of sequence logos package in R ([ggseqlogo](https://github.com/omarwagih/ggseqlogo), [seqLogo](https://bioconductor.org/packages/release/bioc/html/seqLogo.html)), but the inflexibility of custom fonts, characters, sizes with the native R plotting system (nothing against the ggplot system of course). Another reason why this package was made was to address how information was being calculated and how it doesn't address that biological systems do not have equiprobable compositions [@uniprotKB15].
 
 ## Using shi
+
+Using shi is simple as loading as calling `sequenceLogoR` with the multiple aligned sequence and specifying whether the inputs are amino acids or nucleotides. The default parameters should generate a traditional sequence logo.
+
+First of all, we need a multiple sequence alignment to feed in. I will be using the example sequence from the `msa` package, create a multiple sequence alignment, and transform it into an `AAStringSet`.
+
+```{r message=FALSE, warning=FALSE}
+# install the msa package if not found
+if (! require(msa, quietly=TRUE)) {
+  if (! exists("biocLite")) {
+    source("https://bioconductor.org/biocLite.R")
+  }
+  biocLite("msa")
+  library(msa)
+}
+```
+
+```{r}
+mySequenceFile <- system.file("examples", "exampleAA.fasta", package="msa")
+mySequences <- readAAStringSet(mySequenceFile)
+mySequences
+```
+```{r}
+myFirstAlignment <- msa(mySequences, "Muscle")
+myFirstAlignment
+```
+```{r}
+alignment <- AAStringSet(myFirstAlignment)
+alignment
+```
+
+Once we have our alignment, we just feed it to `sequenceLogoR`.
+```{r}
+sequenceLogoR(alignment, isAminoAcid = TRUE)
+```
+
+
+## References
