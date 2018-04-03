@@ -10,6 +10,7 @@
 #' @param end generate the sequence logo until this index.
 #' @param gapCharacter the chracter dipicting a gap in the alignment.
 #' @param calcCorrection flag to calculate small sample corrections.
+#' @param simulate flag to use simulations for small sample corrections.
 #' @param entropyMethod choice between shannon or kl (kullback leibler) on
 #' calculating the entropy.
 #' @param displayGapInfo whether to display the gap informations.
@@ -134,9 +135,10 @@ sequenceLogoR <- function(alignment,
 
     ###### Draw the gap information
     if (displayGapInfo && calcCorrection) {
-      if (correctedInformationAll != correctedInformationObserved) {
-        gapInformation <- correctedInformationAll - correctedInformationObserved
-        graphics::rect(plotColStart, -0.05, plotColStart + 0.95,
+      correctedForAll <- smallSampleCorrectionFunc(numSeqs, currInfo)
+      if (correctedForAll != correctedForObserved) {
+        gapInformation <- correctedForAll - correctedForObserved
+        graphics::rect(i, -0.05, i + 0.95,
                        -gapInformation, col="grey87")
       }
     }

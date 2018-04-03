@@ -18,7 +18,8 @@ Suggests:
     testthat,
     mockery,
     knitr,
-    rmarkdown
+    rmarkdown,
+    msa
 RoxygenNote: 6.0.1
 LinkingTo: Rcpp
 Imports: Rcpp, Biostrings, BiocGenerics, bezier

@@ -6,6 +6,7 @@
 #' to their frequency in the column
 #'
 #' @param information the information for the column.
+#' @inheritParams calcInformation
 #' @return A table of heights for the residues
 calcHeights <- function(freqs, information) {
   return(freqs * information)

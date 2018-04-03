@@ -5,7 +5,7 @@
 #' Change the character, color, and the font for your sequence logo.
 #'
 #' @param residues a vector of residues for the sequence alignment.
-#' @param character a vector of characters corresponding to \code{residues}.
+#' @param characters a vector of characters corresponding to \code{residues}.
 #' @param colors a vector of acceptable R colors corresponding to
 #' \code{residues}.
 #' @param pathToFont the path to the font file to use for the characters. Must
@@ -13,7 +13,7 @@
 #' @export
 generateSettingsMap <- function(residues,
                                 characters = residues,
-                                colors = colorRampPalette(
+                                colors = grDevices::colorRampPalette(
                                   c("#C27E7E", "#816EBA", "#758AC9", "#82C9B6"))
                                   (length(residues)),
                                 pathToFont = system.file("extdata/notosans",
