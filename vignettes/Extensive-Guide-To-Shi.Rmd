@@ -1,0 +1,32 @@
+---
+title: "Extensive Guide to Shi"
+author: "Adriel Martinez"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+bibliography: refs.bib
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Introduction
+
+### Sequence Logos
+
+Sequence logos are a graphical method for displaying conservancy in a multiple sequence alignment. A stack of letters are displayed for every column in the alignment depicting the information for that particular column. While the total height of the stack depicts the information for that column, the letters themselves have heights that are proportional to their frequencies for that particular column. Information is calculated by subtracting the Shannon entropy from a maximum possible information which differs if the sequence is made up amino acids or nucleotides. [@schneider90]
+
+
+### Shi
+
+Shi (Sequence alignment Handling and Inspection) as well as shì (視) to inspect, is an R package that contains tools to assess multiple sequence alignment. For the purpose of this vignette, any reference to Shi will be about the sequence logo generation portion of the package.
+
+The motivation behind this package is not the lack of sequence logos package in R ([ggseqlogo](https://github.com/omarwagih/ggseqlogo), [seqLogo](https://bioconductor.org/packages/release/bioc/html/seqLogo.html)), but the inflexibility of custom fonts, characters, sizes with the native R plotting system (nothing against the ggplot system of course). Another reason why this package was made was to address how information was being calculated and how it doesn't address that biological systems do not have equiprobable compositions [@uniprotKB15].
+
+## Using shi
