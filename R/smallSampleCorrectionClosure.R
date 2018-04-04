@@ -55,8 +55,8 @@ smallSampleCorrectionClosure <- function(numSeqs,
         calculated[numObserveredSamples] <<- TRUE
       }
       if (displayDistributions) {
-        hist(currSim, col = "#C9F4E3", breaks = 25)
-        abline(v = info, col = "#AA00CC")
+        graphics::hist(currSim, col = "#C9F4E3", breaks = 25)
+        graphics::abline(v = info, col = "#AA00CC")
       }
       return(correction * info)
     }
