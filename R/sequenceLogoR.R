@@ -48,6 +48,9 @@ sequenceLogoR <- function(alignment,
   }
   # order the distribution
   if (!missing(refDistribution)) {
+    if (length(names(refDistribution)) == 0) {
+      stop("Feed in a named vector for the reference distribution!")
+    }
     refDistribution <- refDistribution[order(names(refDistribution))]
   }
 
