@@ -75,9 +75,9 @@ sequenceLogoR(partialAlignment, isAminoAcid = TRUE)
 
 ### Customizing the residue display
 
-Currently, the customizations that were possible, in regards of residue display, were being able to set the colors per residue, being able to set which character to represent a residue, and which font to use. A settings map must be generated and fed into `sequenceLogoR`.
+Currently, the customizations that are possible, in regards of residue display, are being able to set the colors per residue, being able to set which character to represent a residue, and which font to use. A settings map must be generated and fed into `sequenceLogoR`.
 
-The default settings were to not display different characters for the residues and to use a color pallete (`colorRampPalette(c("#C27E7E", "#816EBA", "#758AC9", "#82C9B6"))`)
+The default settings were to not display different characters for the residues and to use a color pallet (`colorRampPalette(c("#C27E7E", "#816EBA", "#758AC9", "#82C9B6"))`)
 
 ```{r}
 generateSettingsMap
@@ -98,7 +98,7 @@ sequenceLogoR(partialAlignment, settingsMap = differentColors,
 
 #### Different Font
 
-Different fonts can be used to generate the glyphs for the sequence logo. The packaged and default font is `NotoSans-Regular` acquired from [here](https://github.com/google/fonts/tree/master/ofl/notosans). Inlcuded with the NotoSans family is `NotoSans-Italic`.
+Different fonts can be used to generate the glyphs for the sequence logo. The packaged and default font is `NotoSans-Regular` acquired from [here](https://github.com/google/fonts/tree/master/ofl/notosans). Included with the NotoSans family is `NotoSans-Italic`.
 
 ```{r}
 residues <- c("A", "R", "N", "D", "C", "Q", "E", "G", "H", "I",
@@ -142,7 +142,7 @@ sequenceLogoR(partialAlignment, settingsMap = japaneseCharacters,
 
 ### Entropy Methods
 
-The prior sequence logos have all been generated using shannon entropy. As stated before, one of the motivations of this package was to address non equiprobable biological systems. Instead of using Shannon entropy, Kullback-Leibler divergence could be used to show relative divergence from a reference distribution with the observed distribution from the columns. [@kl51] While it is possible to display under represented residues, this has been omitted because of the feature of display gap information (later on). For the demo below, the frequencies from Uniprot KB 15 will be used for the reference distribution [@uniprotKB15].
+The prior sequence logos have all been generated using Shannon entropy. As stated before, one of the motivations of this package was to address non equiprobable biological systems. Instead of using Shannon entropy, Kullback-Leibler divergence could be used to show relative divergence from a reference distribution with the observed distribution from the columns. [@kl51] While it is possible to display under represented residues, this has been omitted because of the feature of display gap information (later on). For the demo below, the frequencies from Uniprot KB 15 will be used for the reference distribution [@uniprotKB15].
 
 ```{r, fig.cap="A Kullback-Leibler sequence logo."}
 AAref <- numeric()
@@ -172,7 +172,7 @@ sequenceLogoR(partialAlignment, entropyMethod = "kl", isAminoAcid = TRUE,
 
 ### Small Sample corrections
 
-With a small amount of samples, the probabiliy of observing 0 information from a sample size that is not a multiple of the number of residues is 0. This small sample error overestimates what the true information from the alignment. To compensate, a small sample correction factor is applied to the calculated information. [@schneider86] In this package there are two types of corrections that can be done via the small sample correction defined by Schneider or by scaling via significance from simulations. This package has dynamic correction; to correct against the number of observed residues per column. This was done to penalize gappy regions as this don't show the full picture regarding conservation.
+With a small amount of samples, the probability of observing 0 information from a sample size that is not a multiple of the number of residues is 0. This small sample error overestimates what the true information from the alignment. To compensate, a small sample correction factor is applied to the calculated information. [@schneider86] In this package there are two types of corrections that can be done via the small sample correction defined by Schneider or by scaling via significance from simulations. This package has dynamic correction; to correct against the number of observed residues per column. This was done to penalize gappy regions as this don't show the full picture regarding conservation.
 
 
 #### Correction by @schneider86
@@ -284,7 +284,10 @@ sequenceLogoR(partialAlignment, entropyMethod = "kl", isAminoAcid = TRUE,
               refDistribution = AAref, pseudoCountsValue = 0.1)
 ```
 
-
+## Tips and Notes
+* When doing small sample corrections, use simulations for Kullback-Leibler logos while use the traditional corrections for Shannon logos.
+* When using custom fonts, make sure it has the proper permissions to be read.
+* Use a named vector when feeding in the reference distribution.
 
 
 ## References

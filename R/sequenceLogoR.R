@@ -46,6 +46,10 @@ sequenceLogoR <- function(alignment,
     }
     settingsMap <- generateSettingsMap(alphabet)
   }
+  # order the distribution
+  if (!missing(refDistribution)) {
+    refDistribution <- refDistribution[order(names(refDistribution))]
+  }
 
   ###### generate glyphs
   glyphs <- list()

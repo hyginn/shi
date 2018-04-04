@@ -26,6 +26,8 @@ simulationClosure <- function(numTrials,
   } else {
     alphabet <- c("A", "T", "C", "G")
   }
+  # order the alphabet
+  alphabet <- sort(alphabet)
   if (entropyMethod == "kl" && pseudoCountsValue == 0) {
     msg <- "Setting pseudoCountsValue to non zero to prevent zero frequencies!"
     warning(msg)
