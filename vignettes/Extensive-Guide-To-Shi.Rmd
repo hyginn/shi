@@ -1,6 +1,6 @@
 ---
 title: "Extensive Guide to Shi"
-author: "Adriel Martinez"
+author: "Adriel Martinez (adriel@adrielm.ca)"
 output:
   rmarkdown::html_vignette:
     fig_caption: yes
@@ -274,6 +274,17 @@ sequenceLogoR(alignment, isAminoAcid = TRUE, simulate = TRUE,
               refDistribution = AAref, displayGapInfo = TRUE, 
               start = 1, end = 50)
 ```
+
+#### Adjusting the pseudo counts value
+
+Pseudo counts are added to each residue to prevent zero frequencies. By default, 0.001 is added resulting in non observed residues to have a close to zero frequency. This is important to Kullback-Leibler logos as the calculations do not allow zero frequencies. This value can be adjusted from `pseudoCountsValue`.
+
+```{r, fig.cap="Kullback-Leibler sequence logo with and adjusted pseudoCountsValue."}
+sequenceLogoR(partialAlignment, entropyMethod = "kl", isAminoAcid = TRUE, 
+              refDistribution = AAref, pseudoCountsValue = 0.1)
+```
+
+
 
 
 ## References
