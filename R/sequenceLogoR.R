@@ -116,7 +116,7 @@ sequenceLogoR <- function(alignment,
 
       ####### Calculate the correction information if displayGapInfo is enabled
       if (displayGapInfo) {
-        correctedForAll <- smallSampleCorrectionClosure(numSeqs, currInfo)
+        correctedForAll <- smallSampleCorrectionFunc(numSeqs, currInfo)
         correctedInformationForAll[vectorPos] <- correctedForAll
         infoToCheckPlotHeight <- correctedForAll
       }
@@ -179,8 +179,8 @@ sequenceLogoR <- function(alignment,
     if (displayGapInfo && calcCorrection) {
       correctedForAll <- correctedInformationForAll[vectorPos]
       correctedForAll <- max(0, correctedForAll)
-      if (correctedForAll != correctedForObserved) {
-        gapInformation <- correctedForAll - correctedForObserved
+      if (correctedForAll != infoToCalcHeight) {
+        gapInformation <- correctedForAll - infoToCalcHeight
         graphics::rect(colPos, -0.05, colPos + 0.95,
                        -gapInformation, col="grey87")
       }

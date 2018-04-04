@@ -199,7 +199,7 @@ sequenceLogoR(partialAlignment, isAminoAcid = TRUE, entropyMethod = "kl",
 
 A proposed way to calculate correction is to perform simulations. Simulating consists of sampling `numTrials` times (default is 10000) of size `numObservedSamples` from the reference distribution. For each trial, information is calculated and stored (only need to perform simulation once for each `numObservedSamples` called). For the actual correction itself, it is: $I_{corrected} = (count(I_{obs} > I_{sims}) / count(I_{sims})) \times I_{obs}$. This significance scaling shows how well the observed column sequence is not from random chance.
 
-```{r}
+```{r, fig.cap="A Kullback-Leibler logo corrected via simulations."}
 set.seed(222)
 sequenceLogoR(partialAlignment, isAminoAcid = TRUE, simulate = TRUE,
               entropyMethod = "kl", calcCorrection = TRUE, 
@@ -208,7 +208,7 @@ sequenceLogoR(partialAlignment, isAminoAcid = TRUE, simulate = TRUE,
 
 The correction factor compared to the traditional small sample correction is less pronounced but it still adjusts the information that is being displayed. Inspecting the first five columns' simulation distribution, there is no drastic scaling that was done (drastic as in close to 0 corrected information).
 
-```{r, fig.cap="Distribution of simulated information. The bars depict the frequency of the simulated information while the line show the actual observed information for that column."}
+```{r}
 getInfo <- function(col, refDistribution, entropyMethod, pseudoCountsValue) {
   freqs <- getFrequencies(col, isAminoAcid = TRUE, gapCharacter = "-",
                           pseudoCountsValue = pseudoCountsValue)
@@ -235,7 +235,7 @@ for (i in 1:5) {
 
 The simulation correction of Shannon logos are not as pronounced as the majority of the observed information is greater the simulated observations.
 
-```{r}
+```{r, fig.cap="A Shannon logo corrected via simulations."}
 set.seed(333)
 sequenceLogoR(partialAlignment, isAminoAcid = TRUE, simulate = TRUE,
               entropyMethod = "shannon", calcCorrection = TRUE, 
@@ -258,6 +258,22 @@ for (i in 1:5) {
 }
 ```
 
+#### Showing information loss from gaps
+
+Shi uses an adaptive approach regarding the small sample corrections. Sometimes, there is extra information correction when the column is gappy. To show what the information would have been if the correction was for the number of sequences, `displayGapInfo` can be used to show how much extra information was corrected below the axis.
+
+```{r, fig.cap="Gap information for a corrected Shannon sequence logo."}
+sequenceLogoR(alignment, isAminoAcid = TRUE, simulate = FALSE,
+              entropyMethod = "shannon", calcCorrection = TRUE, 
+              displayGapInfo = TRUE, start = 1, end = 50)
+```
+
+```{r, fig.cap="Gap information for a corrected Kullback-Leibler sequence logo."}
+sequenceLogoR(alignment, isAminoAcid = TRUE, simulate = TRUE,
+              entropyMethod = "kl", calcCorrection = TRUE, 
+              refDistribution = AAref, displayGapInfo = TRUE, 
+              start = 1, end = 50)
+```
 
 
 ## References
