@@ -144,7 +144,7 @@ sequenceLogoR(partialAlignment, settingsMap = japaneseCharacters,
 
 The prior sequence logos have all been generated using shannon entropy. As stated before, one of the motivations of this package was to address non equiprobable biological systems. Instead of using Shannon entropy, Kullback-Leibler divergence could be used to show relative divergence from a reference distribution with the observed distribution from the columns. [@kl51] While it is possible to display under represented residues, this has been omitted because of the feature of display gap information (later on). For the demo below, the frequencies from Uniprot KB 15 will be used for the reference distribution [@uniprotKB15].
 
-```{r}
+```{r, fig.cap="A Kullback-Leibler sequence logo."}
 AAref <- numeric()
 AAref["A"] <- 0.0854
 AAref["C"] <- 0.0136
@@ -175,7 +175,25 @@ sequenceLogoR(partialAlignment, entropyMethod = "kl", isAminoAcid = TRUE,
 With a small amount of samples, the probabiliy of observing 0 information from a sample size that is not a multiple of the number of residues is 0. This small sample error overestimates what the true information from the alignment. To compensate, a small sample correction factor is applied to the calculated information. [@schneider86] In this package there are two types of corrections that can be done via the small sample correction defined by Schneider or by scaling via significance from simulations. This package has dynamic correction; to correct against the number of observed residues per column. This was done to penalize gappy regions as this don't show the full picture regarding conservation.
 
 
-#### Correction by Schneider
+#### Correction by @schneider86
+
+@schneider86 lists two ways to calculate the correction factor. The first is an exact method that calculates the entropy for every single possible combination of residues and averaging them. This itself is expensive and not implemented in shì. The other method is an approximation which is "a computationally cheap estimate that is inaccurate for small n values but accurate for large n values." [@schneider86]
+
+The approximated correction $e_n$ is as follows:
+
+$e_n = \frac{s - 1}{2\log{(2)n}}$ where s is the number of residues and n is the number of sequences in alignment.
+
+```{r, fig.cap="A Shannon entropy sequence logo corrected by Schneider's approximation."}
+sequenceLogoR(partialAlignment, isAminoAcid = TRUE, entropyMethod = "shannon", 
+              calcCorrection = TRUE)
+```
+
+This correction is meant for Shannon entropy sequence logos but could also be applied to Kullback-Leibler sequence logos (but it doesn't look right).
+
+```{r, fig.cap="A Kullback-Leibler sequence logo corrected by Schneider's approximation."}
+sequenceLogoR(partialAlignment, isAminoAcid = TRUE, entropyMethod = "kl", 
+              calcCorrection = TRUE, refDistribution = AAref)
+```
 
 
 
