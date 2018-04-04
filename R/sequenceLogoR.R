@@ -68,20 +68,7 @@ sequenceLogoR <- function(alignment,
   maxInfo <- calcMaxInformation(isAminoAcid)
   numSeqs <- length(alignment)
 
-  ###### new plot
-  yMin <- 0
-  if (displayGapInfo) {
-    if (!calcCorrection) {
-      stop("Can't show gap information without calculating correction")
-    }
-    yMin <- -maxInfo
-  }
-  graphics::plot(start, 0,
-       xlim = c(start, end + 1),
-       ylim = c(yMin, maxInfo),
-       type = "n",
-       xlab = NULL,
-       ylab = NULL)
+
 
   ###### Generate correction closure function which contains an internal cache
   if (calcCorrection) {
@@ -94,28 +81,83 @@ sequenceLogoR <- function(alignment,
                                                               pseudoCountsValue)
   }
 
-  ###### iterate though all columns
-  for (i in start:end) {
-    currCol <- Biostrings::subseq(alignment, i, i)
+  ###### iterate through all the columns and calculate the information
+  uncorrectedInformation <- numeric(end - start + 1)
+  maxInfoToPlot <- calcMaxInformation(isAminoAcid)
+  frequencies <- list()
 
-    ####### Calculate the information for the paricular column
+  if (calcCorrection) {
+    correctedInformationForObserved <- numeric(end - start + 1)
+    if (displayGapInfo) {
+      correctedInformationForAll <- numeric(end - start + 1)
+    }
+  }
+  for (colPos in start:end) {
+    currCol <- Biostrings::subseq(alignment, colPos, colPos)
+    vectorPos <- colPos - start + 1
+
+    ####### Calculate the frequencies
     currFreqs <- getFrequencies(currCol, isAminoAcid,
                                 gapCharacter, pseudoCountsValue)
+    frequencies[[colPos]] <- currFreqs
 
-    # uncorrected information
+    ####### calculate the uncorrected information
     currInfo <- calcInformation(currFreqs, isAminoAcid,
                                 entropyMethod, refDistribution)
+    uncorrectedInformation[vectorPos] <- currInfo
+    infoToCheckPlotHeight <- currInfo
 
-    ###### Make correction if specified
+    ####### calculate the corrections if specified
     if (calcCorrection) {
       numObserved <- length(currCol[currCol != gapCharacter])
       correctedForObserved <- smallSampleCorrectionFunc(numObserved, currInfo)
-      infoToCalcHeight <- max(correctedForObserved, 0)
+      correctedInformationForObserved[vectorPos] <- correctedForObserved
+      infoToCheckPlotHeight <- correctedForObserved
+
+      ####### Calculate the correction information if displayGapInfo is enabled
+      if (displayGapInfo) {
+        correctedForAll <- smallSampleCorrectionClosure(numSeqs, currInfo)
+        correctedInformationForAll[vectorPos] <- correctedForAll
+        infoToCheckPlotHeight <- correctedForAll
+      }
+    }
+
+    # A column information can be greated than the max information from
+    # calcInformation for KL sequence logos
+    if (infoToCheckPlotHeight > maxInfoToPlot) {
+      maxInfoToPlot <- infoToCheckPlotHeight
+    }
+  }
+
+
+  ###### Draw the sequence logo
+  if (displayGapInfo) {
+    yMin <- -maxInfoToPlot
+  } else {
+    yMin <- 0
+  }
+
+  # new plot
+  graphics::plot(0, 0,
+                 xlim = c(start, end + 1),
+                 ylim = c(yMin, maxInfoToPlot),
+                 type = "n",
+                 xlab = NULL,
+                 ylab = NULL)
+
+  ###### iterate though all columns
+  for (colPos in start:end) {
+    vectorPos <- colPos - start + 1
+
+    if (calcCorrection) {
+      infoToCalcHeight <- correctedInformationForObserved[vectorPos]
+      infoToCalcHeight <- max(0, infoToCalcHeight)
     } else {
-      infoToCalcHeight <- currInfo
+      infoToCalcHeight <- uncorrectedInformation[vectorPos]
     }
 
     ###### Calculate heights
+    currFreqs <- frequencies[[colPos]]
     heights <- calcHeights(currFreqs, infoToCalcHeight)
     orderedHeights <- heights[order(heights)]
     currNames <- names(orderedHeights)
@@ -127,18 +169,19 @@ sequenceLogoR <- function(alignment,
       height <- orderedHeights[[j]]
       # bbox width should be settable
       glyphPoly(glyphs[[base]],
-                bbox = c(i, currBottom,
-                         i + 0.95, currBottom + height),
+                bbox = c(colPos, currBottom,
+                         colPos + 0.95, currBottom + height),
                 fill = colors[[base]])
       currBottom <- currBottom + height
     }
 
     ###### Draw the gap information
     if (displayGapInfo && calcCorrection) {
-      correctedForAll <- smallSampleCorrectionFunc(numSeqs, currInfo)
+      correctedForAll <- correctedInformationForAll[vectorPos]
+      correctedForAll <- max(0, correctedForAll)
       if (correctedForAll != correctedForObserved) {
         gapInformation <- correctedForAll - correctedForObserved
-        graphics::rect(i, -0.05, i + 0.95,
+        graphics::rect(colPos, -0.05, colPos + 0.95,
                        -gapInformation, col="grey87")
       }
     }

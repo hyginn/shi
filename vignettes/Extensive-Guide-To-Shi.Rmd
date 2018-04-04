@@ -132,6 +132,7 @@ japaneseCharacters <- generateSettingsMap(residues, characters = characters, pat
 sequenceLogoR(partialAlignment, settingsMap = japaneseCharacters, isAminoAcid = TRUE)
 ```
 
+### Small Sample Corrections
 
 
 ## References
