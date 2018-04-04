@@ -13,15 +13,19 @@
 #' reduendant.
 #'
 #' @param numSeqs the number of sequence for the alignment.
+#' @param displayDistributions have the ability to inspect the distributions of
+#' the simulations.
 #' @inheritParams sequenceLogoR
 #' @seealso \url{https://en.wikipedia.org/wiki/Sequence_logo}
+#' @export
 smallSampleCorrectionClosure <- function(numSeqs,
                                          isAminoAcid = FALSE,
                                          gapCharacter = "-",
                                          simulate = FALSE,
                                          entropyMethod = "kl",
                                          refDistribution,
-                                         pseudoCountsValue = 0) {
+                                         pseudoCountsValue = 0,
+                                         displayDistributions = FALSE) {
   # setup cache
   if (simulate) {
     cache <- list()
@@ -36,8 +40,8 @@ smallSampleCorrectionClosure <- function(numSeqs,
     simFunc <- simulationClosure(numTrials = 10000,
                                  isAminoAcid,
                                  gapCharacter,
-                                 entropyMethod,
                                  refDistribution,
+                                 entropyMethod,
                                  pseudoCountsValue)
     closure <- function(numObserveredSamples, info) {
       if (calculated[numObserveredSamples]) {
@@ -49,6 +53,10 @@ smallSampleCorrectionClosure <- function(numSeqs,
         cache[[numObserveredSamples]] <<- currSim
         correction <- sum(currSim <= info) / length(currSim)
         calculated[numObserveredSamples] <<- TRUE
+      }
+      if (displayDistributions) {
+        hist(currSim, col = "#C9F4E3", breaks = 25)
+        abline(v = info, col = "#AA00CC")
       }
       return(correction * info)
     }
