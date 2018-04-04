@@ -1,5 +1,5 @@
 ---
-title: "Extensive Guide to Shi"
+title: "Extensive Guide To Shi"
 author: "Adriel Martinez (adriel@adrielm.ca)"
 output:
   rmarkdown::html_vignette:
@@ -31,7 +31,7 @@ Sequence logos are a graphical method for displaying conservancy in a multiple s
 
 Shi (Sequence alignment Handling and Inspection) as well as shì (視) to inspect, is an R package that contains tools to assess multiple sequence alignment. For the purpose of this vignette, any reference to Shi will be about the sequence logo generation portion of the package.
 
-The motivation behind this package is not the lack of sequence logos package in R ([ggseqlogo](https://github.com/omarwagih/ggseqlogo), [seqLogo](https://bioconductor.org/packages/release/bioc/html/seqLogo.html)), but the inflexibility of custom fonts, characters, sizes with the native R plotting system (nothing against the ggplot system of course). Another reason why this package was made was to address how information was being calculated and how it doesn't address that biological systems do not have equiprobable compositions [@uniprotKB15].
+The motivation behind this package is not the lack of sequence logos package in R ([ggseqlogo](https://github.com/omarwagih/ggseqlogo), [seqLogo](https://bioconductor.org/packages/release/bioc/html/seqLogo.html)), but the inflexibility of custom fonts, characters, sizes with the native R plotting system (nothing against the ggplot system of course). Another reason why this package was made was to address how information was being calculated and how it doesn't address that biological systems do not have equiprobable compositions. [@uniprotKB15]
 
 ## Using shi
 
@@ -69,15 +69,15 @@ partialAlignment
 ```
 
 Once we have our alignment, we just feed it to `sequenceLogoR`.
-```{r message=FALSE, warning=FALSE}
+```{r message=FALSE, warning=FALSE, fig.cap="A sequence logo generated with the default settings."}
 sequenceLogoR(partialAlignment, isAminoAcid = TRUE)
 ```
 
-### Customizing the residue display
+### Customizing the Residue Display
 
-Currently, the customizations that are possible, in regards of residue display, are being able to set the colors per residue, being able to set which character to represent a residue, and which font to use. A settings map must be generated and fed into `sequenceLogoR`.
+Currently, the customizations that are avaiable are being able to set the colors per residue, being able to set which character to represent a residue, and which font to use. A settings map must be generated and fed into `sequenceLogoR`.
 
-The default settings were to not display different characters for the residues and to use a color pallet (`colorRampPalette(c("#C27E7E", "#816EBA", "#758AC9", "#82C9B6"))`)
+The default settings were to not display different characters for the residues, to use a color pallet (`colorRampPalette(c("#C27E7E", "#816EBA", "#758AC9", "#82C9B6"))`), and to use the packaged `NotoSans-Regular.ttf` font.
 
 ```{r}
 generateSettingsMap
@@ -87,7 +87,7 @@ generateSettingsMap
 
 Since the underlying plotting system for the sequence logos is just the native R plotting system, any valid R colors can be used.
 
-```{r message=FALSE, warning=FALSE}
+```{r message=FALSE, warning=FALSE, fig.cap="A sequence logo with different colors per residue."}
 residues <- c("A", "R", "N", "D", "C", "Q", "E", "G", "H", "I",
               "L", "K", "M", "F", "P", "S", "T", "W", "Y", "V")
 randomColors <- colorRampPalette(c("blue", "red", "green"))(length(residues))
@@ -100,7 +100,7 @@ sequenceLogoR(partialAlignment, settingsMap = differentColors,
 
 Different fonts can be used to generate the glyphs for the sequence logo. The packaged and default font is `NotoSans-Regular` acquired from [here](https://github.com/google/fonts/tree/master/ofl/notosans). Included with the NotoSans family is `NotoSans-Italic`.
 
-```{r}
+```{r, fig.cap="A sequence logo with a different font."}
 residues <- c("A", "R", "N", "D", "C", "Q", "E", "G", "H", "I",
               "L", "K", "M", "F", "P", "S", "T", "W", "Y", "V")
 italicsCharacters <- generateSettingsMap(residues, pathToFont =
@@ -114,7 +114,7 @@ sequenceLogoR(partialAlignment, settingsMap = italicsCharacters,
 
 #### Different Characters
 
-As long as the supplied font can support the character, there won't be a problem on using it instead of the residue character. 
+As long as the supplied font can support the character, there won't be a problem on displaying the character. 
 
 ```{r, fig.cap="An example with greek characters."}
 residues <- c("A", "R", "N", "D", "C", "Q", "E", "G", "H", "I",
@@ -170,9 +170,9 @@ sequenceLogoR(partialAlignment, entropyMethod = "kl", isAminoAcid = TRUE,
               refDistribution = AAref)
 ```
 
-### Small Sample corrections
+### Small Sample Corrections
 
-With a small amount of samples, the probability of observing 0 information from a sample size that is not a multiple of the number of residues is 0. This small sample error overestimates what the true information from the alignment. To compensate, a small sample correction factor is applied to the calculated information. [@schneider86] In this package there are two types of corrections that can be done via the small sample correction defined by Schneider or by scaling via significance from simulations. This package has dynamic correction; to correct against the number of observed residues per column. This was done to penalize gappy regions as this don't show the full picture regarding conservation.
+With a small amount of samples, the probability of observing 0 information from a sample size that is not a multiple of the number of residues is 0. In this scenario, information is overestimated from what the true information could be. To compensate, a small sample correction factor is applied to the calculated information. [@schneider86] In this package there are two types of corrections that can be done, via the small sample correction defined by Schneider or by scaling via significance from simulations. This package also has dynamic correction; to correct against the number of observed residues per column. This was done to penalize gappy regions as this don't show the full picture regarding conservation.
 
 
 #### Correction by @schneider86
@@ -184,11 +184,11 @@ The approximated correction $e_n$ is as follows:
 $e_n = \frac{s - 1}{2\log{(2)n}}$ where s is the number of residues and n is the number of sequences in alignment.
 
 ```{r, fig.cap="A Shannon entropy sequence logo corrected by Schneider's approximation."}
-sequenceLogoR(partialAlignment, isAminoAcid = TRUE, entropyMethod = "shannon", 
-              calcCorrection = TRUE)
+sequenceLogoR(partialAlignment, isAminoAcid = TRUE, 
+              entropyMethod = "shannon", calcCorrection = TRUE)
 ```
 
-This correction is meant for Shannon entropy sequence logos but could also be applied to Kullback-Leibler sequence logos (but it doesn't look right).
+This type of correction is meant for Shannon sequence logos but could also be applied to Kullback-Leibler sequence logos (but it doesn't look right).
 
 ```{r, fig.cap="A Kullback-Leibler sequence logo corrected by Schneider's approximation."}
 sequenceLogoR(partialAlignment, isAminoAcid = TRUE, entropyMethod = "kl", 
@@ -206,7 +206,7 @@ sequenceLogoR(partialAlignment, isAminoAcid = TRUE, simulate = TRUE,
               refDistribution = AAref)
 ```
 
-The correction factor compared to the traditional small sample correction is less pronounced but it still adjusts the information that is being displayed. Inspecting the first five columns' simulation distribution, there is no drastic scaling that was done (drastic as in close to 0 corrected information).
+The correction factor compared to the traditional small sample correction is less pronounced but it still adjusts the information that is being displayed. Inspecting the first five columns' simulation distribution, there is no drastic scaling that was done (drastic as in close to 0 for the corrected information).
 
 ```{r}
 getInfo <- function(col, refDistribution, entropyMethod, pseudoCountsValue) {
@@ -258,9 +258,9 @@ for (i in 1:5) {
 }
 ```
 
-#### Showing information loss from gaps
+#### Showing Information Loss From Gaps
 
-Shi uses an adaptive approach regarding the small sample corrections. Sometimes, there is extra information correction when the column is gappy. To show what the information would have been if the correction was for the number of sequences, `displayGapInfo` can be used to show how much extra information was corrected below the axis.
+Shi uses an dynamic approach regarding the small sample corrections. Sometimes, there is extra information correction when the column is gappy. To show what the information would have been if the correction was for the number of sequences, `displayGapInfo` can be used to show how much extra information was corrected below the axis.
 
 ```{r, fig.cap="Gap information for a corrected Shannon sequence logo."}
 sequenceLogoR(alignment, isAminoAcid = TRUE, simulate = FALSE,
@@ -275,7 +275,7 @@ sequenceLogoR(alignment, isAminoAcid = TRUE, simulate = TRUE,
               start = 1, end = 50)
 ```
 
-#### Adjusting the pseudo counts value
+#### Adjusting the Pseudo Counts Value
 
 Pseudo counts are added to each residue to prevent zero frequencies. By default, 0.001 is added resulting in non observed residues to have a close to zero frequency. This is important to Kullback-Leibler logos as the calculations do not allow zero frequencies. This value can be adjusted from `pseudoCountsValue`.
 
