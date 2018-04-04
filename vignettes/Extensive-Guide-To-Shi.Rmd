@@ -92,7 +92,8 @@ residues <- c("A", "R", "N", "D", "C", "Q", "E", "G", "H", "I",
               "L", "K", "M", "F", "P", "S", "T", "W", "Y", "V")
 randomColors <- colorRampPalette(c("blue", "red", "green"))(length(residues))
 differentColors <- generateSettingsMap(residues, colors = randomColors)
-sequenceLogoR(partialAlignment, settingsMap = differentColors, isAminoAcid = TRUE)
+sequenceLogoR(partialAlignment, settingsMap = differentColors, 
+              isAminoAcid = TRUE)
 ```
 
 #### Different Font
@@ -106,7 +107,8 @@ italicsCharacters <- generateSettingsMap(residues, pathToFont =
                                            system.file("extdata/notosans",
                                               "NotoSans-Italic.ttf",
                                               package = "shi"))
-sequenceLogoR(partialAlignment, settingsMap = italicsCharacters, isAminoAcid = TRUE)
+sequenceLogoR(partialAlignment, settingsMap = italicsCharacters, 
+              isAminoAcid = TRUE)
 ```
 
 
@@ -120,7 +122,8 @@ residues <- c("A", "R", "N", "D", "C", "Q", "E", "G", "H", "I",
 characters <- c("α", "β", "γ", "δ", "ε", "ζ", "η", "θ", "ι", "κ",
                 "λ", "μ", "ν", "ξ", "ο", "π", "ρ", "σ", "τ", "υ")
 greekCharacters <- generateSettingsMap(residues, characters = characters)
-sequenceLogoR(partialAlignment, settingsMap = greekCharacters, isAminoAcid = TRUE)
+sequenceLogoR(partialAlignment, settingsMap = greekCharacters, 
+              isAminoAcid = TRUE)
 ```
 
 ```{r, fig.cap="An example with Japanese characters."}
@@ -128,11 +131,45 @@ residues <- c("A", "R", "N", "D", "C", "Q", "E", "G", "H", "I",
               "L", "K", "M", "F", "P", "S", "T", "W", "Y", "V")
 characters <- c("試", "し", "打", "ち", "が","で", "き", "ま", "す", "。",
                 "文", "字", "の", "太", "さ", "や", "サ", "イ", "ズ", "の")
-japaneseCharacters <- generateSettingsMap(residues, characters = characters, pathToFont = system.file("extdata/sawarbi", "SawarabiMincho-Regular.ttf", package = "shi"))
-sequenceLogoR(partialAlignment, settingsMap = japaneseCharacters, isAminoAcid = TRUE)
+japaneseCharacters <- generateSettingsMap(residues, characters = characters, 
+                                          pathToFont = 
+                                            system.file("extdata/sawarbi", 
+                                              "SawarabiMincho-Regular.ttf", 
+                                            package = "shi"))
+sequenceLogoR(partialAlignment, settingsMap = japaneseCharacters, 
+              isAminoAcid = TRUE)
 ```
 
-### Small Sample Corrections
+### Entropy Methods
+
+The prior sequence logos have all been generated using shannon entropy. As stated before, one of the motivations of this package was to address non equiprobable biological systems. Instead of using Shannon entropy, Kullback-Leibler divergence could be used to show relative divergence from a reference distribution with the observed distribution from the columns. [@kl51] While it is possible to display under represented residues, this has been omitted because of the feature of display gap information (later on). For the demo below, the frequencies from Uniprot KB 15 will be used for the reference distribution [@uniprotKB15].
+
+```{r}
+AAref <- numeric()
+AAref["A"] <- 0.0854
+AAref["C"] <- 0.0136
+AAref["D"] <- 0.0526
+AAref["E"] <- 0.0609
+AAref["F"] <- 0.0402
+AAref["G"] <- 0.0705
+AAref["H"] <- 0.0222
+AAref["I"] <- 0.0589
+AAref["K"] <- 0.0522
+AAref["L"] <- 0.0983
+AAref["M"] <- 0.0242
+AAref["N"] <- 0.0417
+AAref["P"] <- 0.0484
+AAref["Q"] <- 0.0393
+AAref["R"] <- 0.0554
+AAref["S"] <- 0.0684
+AAref["T"] <- 0.0560
+AAref["V"] <- 0.0665
+AAref["W"] <- 0.0133
+AAref["Y"] <- 0.0302
+sequenceLogoR(partialAlignment, entropyMethod = "kl", isAminoAcid = TRUE, 
+              refDistribution = AAref)
+```
+
 
 
 ## References

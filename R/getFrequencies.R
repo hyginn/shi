@@ -22,7 +22,7 @@ getFrequencies <- function(column,
     alphabet <- c("A", "T", "C", "G")
   }
   freqs <- numeric(length(alphabet))
-  names(freqs) <- alphabet
+  names(freqs) <- sort(alphabet)
   for (i in seq_along(column)) {
     residue <- as.character(column[i])
     isGap <- residue == gapCharacter

@@ -29,7 +29,7 @@ sequenceLogoR <- function(alignment,
                           entropyMethod = "shannon",
                           displayGapInfo = FALSE,
                           refDistribution,
-                          pseudoCountsValue = 0) {
+                          pseudoCountsValue = 0.001) {
   ##### Param checking
   if (missing(isAminoAcid)) {
     stop("isAminoAcid is not supplied!")

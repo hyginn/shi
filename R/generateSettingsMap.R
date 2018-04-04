@@ -12,13 +12,12 @@
 #' have glyphs for all the characters.
 #' @export
 generateSettingsMap <- function(residues,
-                                characters = residues,
-                                colors = grDevices::colorRampPalette(
+  characters = residues, colors = grDevices::colorRampPalette(
                                   c("#C27E7E", "#816EBA", "#758AC9", "#82C9B6"))
                                   (length(residues)),
-                                pathToFont = system.file("extdata/notosans",
-                                              "NotoSans-Regular.ttf",
-                                              package = "shi")) {
+  pathToFont = system.file("extdata/notosans",
+                           "NotoSans-Regular.ttf",
+                            package = "shi")) {
   settingsMap <- list()
   settingsMap[["font"]] <- pathToFont
   settingsMap[["residueSettings"]] <- list()
