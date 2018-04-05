@@ -27,6 +27,12 @@ Some useful keyboard shortcuts for package authoring:
 
 -----------------------------------------------
 
+Reading the vignettes.
+
+* Build and install the package and vignette:   `devtools::install(build_vignettes = TRUE)`
+* List the vignettes:                           `browseVignettes("shi")`
+* Read a specific vignette:                     `vignette("Extensive-Guide-To-Shi")`
+
 **Rebase** your branch and **Check** your branch before every push. DO NOT PUSH CODE that does not pass without error, warnings and notes. We are running Travis CI on GitHub and your code can't be merged if it fails. To merge, push your branch to GitHub and create a [pull request](https://help.github.com/articles/merging-a-pull-request/). Then tap someone to review your code and merge it.
 
 -----------------------------------------------
