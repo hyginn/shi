@@ -368,10 +368,13 @@ makeGlyph <- function(c, font = GLYPHFONT, svgFile = tempfile()) {
 
   # codepoint to svg
   # https://xmlgraphics.apache.org/batik/tools/font-converter.html
-  myCommand <- sprintf("batik-ttf2svg %s -l %d -h %d -id xSVG -o %s",
+  javaExec <- "java -jar /home/adrl/Downloads/batik/batik-1.9/batik-ttf2svg-1.9.jar"
+  myCommand <- sprintf("%s %s -l %d -h %d -id xSVG -o %s",
+                       javaExec,
                        glyph$font,
                        glyph$codepoint,
                        glyph$codepoint,
+
                        svgFile)
   system(command = myCommand)
   mySVG <- readLines(svgFile)
@@ -466,3 +469,4 @@ glyphPoly <- function(glyph,
 
 
 # [END]
+

@@ -1,0 +1,293 @@
+---
+title: "Extensive Guide To Shi"
+author: "Adriel Martinez (adriel@adrielm.ca)"
+output:
+  rmarkdown::html_vignette:
+    fig_caption: yes
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+bibliography: refs.bib
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+knitr::opts_chunk$set(fig.width=7, fig.height=5) 
+library(shi)
+```
+
+## Introduction
+
+### Sequence Logos
+
+Sequence logos are a graphical method for displaying conservancy in a multiple sequence alignment. A stack of letters are displayed for every column in the alignment depicting the information for that particular column. While the total height of the stack depicts the information for that column, the letters themselves have heights that are proportional to their frequencies for that particular column. Information is calculated by subtracting the Shannon entropy from a maximum possible information which differs if the sequence is made up amino acids or nucleotides. [@schneider90]
+
+
+### Shi
+
+Shi (Sequence alignment Handling and Inspection) as well as shì (視) to inspect, is an R package that contains tools to assess multiple sequence alignment. For the purpose of this vignette, any reference to Shi will be about the sequence logo generation portion of the package.
+
+The motivation behind this package is not the lack of sequence logos package in R ([ggseqlogo](https://github.com/omarwagih/ggseqlogo), [seqLogo](https://bioconductor.org/packages/release/bioc/html/seqLogo.html)), but the inflexibility of custom fonts, characters, sizes with the native R plotting system (nothing against the ggplot system of course). Another reason why this package was made was to address how information was being calculated and how it doesn't address that biological systems do not have equiprobable compositions. [@uniprotKB15]
+
+## Using shi
+
+Using shi is simple as loading as calling `sequenceLogoR` with the multiple aligned sequence and specifying whether the inputs are amino acids or nucleotides. The default parameters should generate a traditional sequence logo.
+
+### Quickstart
+
+First of all, we need a multiple sequence alignment to feed in. I will be using the example sequence from the `msa` package, create a multiple sequence alignment, and transform it into an `AAStringSet`.
+
+```{r message=FALSE, warning=FALSE}
+# install the msa package if not found
+if (! require(msa, quietly=TRUE)) {
+  if (! exists("biocLite")) {
+    source("https://bioconductor.org/biocLite.R")
+  }
+  biocLite("msa")
+  library(msa)
+}
+```
+
+```{r}
+mySequenceFile <- system.file("examples", "exampleAA.fasta", package="msa")
+mySequences <- readAAStringSet(mySequenceFile)
+mySequences
+```
+```{r}
+myFirstAlignment <- msa(mySequences, "Muscle")
+myFirstAlignment
+```
+```{r}
+alignment <- AAStringSet(myFirstAlignment)
+alignment
+partialAlignment <- subseq(alignment, start = 220, end = 240)
+partialAlignment
+```
+
+Once we have our alignment, we just feed it to `sequenceLogoR`.
+```{r message=FALSE, warning=FALSE, fig.cap="A sequence logo generated with the default settings."}
+sequenceLogoR(partialAlignment, isAminoAcid = TRUE)
+```
+
+### Customizing the Residue Display
+
+Currently, the customizations that are avaiable are being able to set the colors per residue, being able to set which character to represent a residue, and which font to use. A settings map must be generated and fed into `sequenceLogoR`.
+
+The default settings were to not display different characters for the residues, to use a color pallet (`colorRampPalette(c("#C27E7E", "#816EBA", "#758AC9", "#82C9B6"))`), and to use the packaged `NotoSans-Regular.ttf` font.
+
+```{r}
+generateSettingsMap
+```
+
+#### Different Colors
+
+Since the underlying plotting system for the sequence logos is just the native R plotting system, any valid R colors can be used.
+
+```{r message=FALSE, warning=FALSE, fig.cap="A sequence logo with different colors per residue."}
+residues <- c("A", "R", "N", "D", "C", "Q", "E", "G", "H", "I",
+              "L", "K", "M", "F", "P", "S", "T", "W", "Y", "V")
+randomColors <- colorRampPalette(c("blue", "red", "green"))(length(residues))
+differentColors <- generateSettingsMap(residues, colors = randomColors)
+sequenceLogoR(partialAlignment, settingsMap = differentColors, 
+              isAminoAcid = TRUE)
+```
+
+#### Different Font
+
+Different fonts can be used to generate the glyphs for the sequence logo. The packaged and default font is `NotoSans-Regular` acquired from [here](https://github.com/google/fonts/tree/master/ofl/notosans). Included with the NotoSans family is `NotoSans-Italic`.
+
+```{r, fig.cap="A sequence logo with a different font."}
+residues <- c("A", "R", "N", "D", "C", "Q", "E", "G", "H", "I",
+              "L", "K", "M", "F", "P", "S", "T", "W", "Y", "V")
+italicsCharacters <- generateSettingsMap(residues, pathToFont =
+                                           system.file("extdata/notosans",
+                                              "NotoSans-Italic.ttf",
+                                              package = "shi"))
+sequenceLogoR(partialAlignment, settingsMap = italicsCharacters, 
+              isAminoAcid = TRUE)
+```
+
+
+#### Different Characters
+
+As long as the supplied font can support the character, there won't be a problem on displaying the character. 
+
+```{r, fig.cap="An example with greek characters."}
+residues <- c("A", "R", "N", "D", "C", "Q", "E", "G", "H", "I",
+              "L", "K", "M", "F", "P", "S", "T", "W", "Y", "V")
+characters <- c("α", "β", "γ", "δ", "ε", "ζ", "η", "θ", "ι", "κ",
+                "λ", "μ", "ν", "ξ", "ο", "π", "ρ", "σ", "τ", "υ")
+greekCharacters <- generateSettingsMap(residues, characters = characters)
+sequenceLogoR(partialAlignment, settingsMap = greekCharacters, 
+              isAminoAcid = TRUE)
+```
+
+```{r, fig.cap="An example with Japanese characters."}
+residues <- c("A", "R", "N", "D", "C", "Q", "E", "G", "H", "I",
+              "L", "K", "M", "F", "P", "S", "T", "W", "Y", "V")
+characters <- c("試", "し", "打", "ち", "が","で", "き", "ま", "す", "。",
+                "文", "字", "の", "太", "さ", "や", "サ", "イ", "ズ", "の")
+japaneseCharacters <- generateSettingsMap(residues, characters = characters, 
+                                          pathToFont = 
+                                            system.file("extdata/sawarbi", 
+                                              "SawarabiMincho-Regular.ttf", 
+                                            package = "shi"))
+sequenceLogoR(partialAlignment, settingsMap = japaneseCharacters, 
+              isAminoAcid = TRUE)
+```
+
+### Entropy Methods
+
+The prior sequence logos have all been generated using Shannon entropy. As stated before, one of the motivations of this package was to address non equiprobable biological systems. Instead of using Shannon entropy, Kullback-Leibler divergence could be used to show relative divergence from a reference distribution with the observed distribution from the columns. [@kl51] While it is possible to display under represented residues, this has been omitted because of the feature of display gap information (later on). For the demo below, the frequencies from Uniprot KB 15 will be used for the reference distribution [@uniprotKB15].
+
+```{r, fig.cap="A Kullback-Leibler sequence logo."}
+AAref <- numeric()
+AAref["A"] <- 0.0854
+AAref["C"] <- 0.0136
+AAref["D"] <- 0.0526
+AAref["E"] <- 0.0609
+AAref["F"] <- 0.0402
+AAref["G"] <- 0.0705
+AAref["H"] <- 0.0222
+AAref["I"] <- 0.0589
+AAref["K"] <- 0.0522
+AAref["L"] <- 0.0983
+AAref["M"] <- 0.0242
+AAref["N"] <- 0.0417
+AAref["P"] <- 0.0484
+AAref["Q"] <- 0.0393
+AAref["R"] <- 0.0554
+AAref["S"] <- 0.0684
+AAref["T"] <- 0.0560
+AAref["V"] <- 0.0665
+AAref["W"] <- 0.0133
+AAref["Y"] <- 0.0302
+sequenceLogoR(partialAlignment, entropyMethod = "kl", isAminoAcid = TRUE, 
+              refDistribution = AAref)
+```
+
+### Small Sample Corrections
+
+With a small amount of samples, the probability of observing 0 information from a sample size that is not a multiple of the number of residues is 0. In this scenario, information is overestimated from what the true information could be. To compensate, a small sample correction factor is applied to the calculated information. [@schneider86] In this package there are two types of corrections that can be done, via the small sample correction defined by Schneider or by scaling via significance from simulations. This package also has dynamic correction; to correct against the number of observed residues per column. This was done to penalize gappy regions as this don't show the full picture regarding conservation.
+
+
+#### Correction by @schneider86
+
+@schneider86 lists two ways to calculate the correction factor. The first is an exact method that calculates the entropy for every single possible combination of residues and averaging them. This itself is expensive and not implemented in shì. The other method is an approximation which is "a computationally cheap estimate that is inaccurate for small n values but accurate for large n values." [@schneider86]
+
+The approximated correction $e_n$ is as follows:
+
+$e_n = \frac{s - 1}{2\log{(2)n}}$ where s is the number of residues and n is the number of sequences in alignment.
+
+```{r, fig.cap="A Shannon entropy sequence logo corrected by Schneider's approximation."}
+sequenceLogoR(partialAlignment, isAminoAcid = TRUE, 
+              entropyMethod = "shannon", calcCorrection = TRUE)
+```
+
+This type of correction is meant for Shannon sequence logos but could also be applied to Kullback-Leibler sequence logos (but it doesn't look right).
+
+```{r, fig.cap="A Kullback-Leibler sequence logo corrected by Schneider's approximation."}
+sequenceLogoR(partialAlignment, isAminoAcid = TRUE, entropyMethod = "kl", 
+              calcCorrection = TRUE, refDistribution = AAref)
+```
+
+#### Correction by Simulation
+
+A proposed way to calculate correction is to perform simulations. Simulating consists of sampling `numTrials` times (default is 10000) of size `numObservedSamples` from the reference distribution. For each trial, information is calculated and stored (only need to perform simulation once for each `numObservedSamples` called). For the actual correction itself, it is: $I_{corrected} = (count(I_{obs} > I_{sims}) / count(I_{sims})) \times I_{obs}$. This significance scaling shows how well the observed column sequence is not from random chance.
+
+```{r, fig.cap="A Kullback-Leibler logo corrected via simulations."}
+set.seed(222)
+sequenceLogoR(partialAlignment, isAminoAcid = TRUE, simulate = TRUE,
+              entropyMethod = "kl", calcCorrection = TRUE, 
+              refDistribution = AAref)
+```
+
+The correction factor compared to the traditional small sample correction is less pronounced but it still adjusts the information that is being displayed. Inspecting the first five columns' simulation distribution, there is no drastic scaling that was done (drastic as in close to 0 for the corrected information).
+
+```{r}
+getInfo <- function(col, refDistribution, entropyMethod, pseudoCountsValue) {
+  freqs <- getFrequencies(col, isAminoAcid = TRUE, gapCharacter = "-",
+                          pseudoCountsValue = pseudoCountsValue)
+  info <- calcInformation(freqs, isAminoAcid = TRUE, 
+                          entropyMethod = entropyMethod,
+                          refDistribution = refDistribution)
+  return(info)
+}
+
+smallSampleCorrection1 <- smallSampleCorrectionClosure(length(partialAlignment),
+                            isAminoAcid = TRUE, simulate = TRUE,
+                            entropyMethod = "kl", refDistribution = AAref,
+                            pseudoCountsValue = 0.001,
+                            displayDistributions = TRUE)
+set.seed(222)
+for (i in 1:5) {
+  currCol <- Biostrings::subseq(partialAlignment, i, i)
+  info <- getInfo(currCol, AAref, 
+                  entropyMethod = "kl", pseudoCountsValue = 0.001)
+  numObs <- sum(currCol != "-")
+  smallSampleCorrection1(numObs, info)
+}
+```
+
+The simulation correction of Shannon logos are not as pronounced as the majority of the observed information is greater the simulated observations.
+
+```{r, fig.cap="A Shannon logo corrected via simulations."}
+set.seed(333)
+sequenceLogoR(partialAlignment, isAminoAcid = TRUE, simulate = TRUE,
+              entropyMethod = "shannon", calcCorrection = TRUE, 
+              refDistribution = AAref)
+```
+
+```{r}
+smallSampleCorrection2 <- smallSampleCorrectionClosure(length(partialAlignment),
+                            isAminoAcid = TRUE, simulate = TRUE,
+                            entropyMethod = "shannon", refDistribution = AAref,
+                            pseudoCountsValue = 0.001,
+                            displayDistributions = TRUE)
+set.seed(333)
+for (i in 1:5) {
+  currCol <- Biostrings::subseq(partialAlignment, i, i)
+  info <- getInfo(currCol, AAref, 
+                  entropyMethod = "shannon", pseudoCountsValue = 0.001)
+  numObs <- sum(currCol != "-")
+  smallSampleCorrection2(numObs, info)
+}
+```
+
+#### Showing Information Loss From Gaps
+
+Shi uses an dynamic approach regarding the small sample corrections. Sometimes, there is extra information correction when the column is gappy. To show what the information would have been if the correction was for the number of sequences, `displayGapInfo` can be used to show how much extra information was corrected below the axis.
+
+```{r, fig.cap="Gap information for a corrected Shannon sequence logo."}
+sequenceLogoR(alignment, isAminoAcid = TRUE, simulate = FALSE,
+              entropyMethod = "shannon", calcCorrection = TRUE, 
+              displayGapInfo = TRUE, start = 1, end = 50)
+```
+
+```{r, fig.cap="Gap information for a corrected Kullback-Leibler sequence logo."}
+sequenceLogoR(alignment, isAminoAcid = TRUE, simulate = TRUE,
+              entropyMethod = "kl", calcCorrection = TRUE, 
+              refDistribution = AAref, displayGapInfo = TRUE, 
+              start = 1, end = 50)
+```
+
+#### Adjusting the Pseudo Counts Value
+
+Pseudo counts are added to each residue to prevent zero frequencies. By default, 0.001 is added resulting in non observed residues to have a close to zero frequency. This is important to Kullback-Leibler logos as the calculations do not allow zero frequencies. This value can be adjusted from `pseudoCountsValue`.
+
+```{r, fig.cap="Kullback-Leibler sequence logo with and adjusted pseudoCountsValue."}
+sequenceLogoR(partialAlignment, entropyMethod = "kl", isAminoAcid = TRUE, 
+              refDistribution = AAref, pseudoCountsValue = 0.1)
+```
+
+## Tips and Notes
+* When doing small sample corrections, use simulations for Kullback-Leibler logos while use the traditional corrections for Shannon logos.
+* When using custom fonts, make sure it has the proper permissions to be read.
+* Use a named vector when feeding in the reference distribution.
+
+
+## References
